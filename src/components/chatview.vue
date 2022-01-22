@@ -20,7 +20,7 @@
 			return {
 				winheight:'',
 				winw:'',
-				link:window.location.host?'//' + window.location.host + '/#/chatpage' : '#/chatpage',
+				link:'#/chatpage',
 				ifshowchat:2,//1为出现，2为不出现
 			}
 		},
