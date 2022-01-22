@@ -46,6 +46,7 @@
 		top: 100px;
 		right: 0;
 		max-width: 500px;
+		z-index: 1;
 		background-color: #fff;
 		transition:right 500ms;
 	}
