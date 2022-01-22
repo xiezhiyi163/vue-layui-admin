@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+	
+	<link rel="stylesheet" type="text/css" href="./layui/css/layui.css"/>
+	<link rel="stylesheet" type="text/css" href="./swiper6/swiper-bundle.css"/>
+	<link rel="stylesheet" type="text/css" href="./mscroll/_mscroll.css"/>
+	<link rel="stylesheet" type="text/css" href="./font-awesome-4.7.0/css/font-awesome.css"/>
+	<link rel="stylesheet" type="text/css" href="./jsmind-master/style/jsmind.css"/>
+	
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
+  <body>
+	  
+	<script src="./layui/layui.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./layui/layuitreesearch.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./swiper6/swiper-bundle.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./Sortable.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./mscroll/_mscroll.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./jsmind-master/js/jsmind.js" type="text/javascript" charset="utf-8"></script>
+	<!-- 4.2.2 -->
+	<script type="text/javascript">
+		mxBasePath = './mxgraph-master/javascript/src'
+	</script>
+	<script src="./mxgraph-master/javascript/mxClient.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		window.mxGraph = mxGraph
+		window.mxCellState = mxCellState
+		window.mxStackLayout = mxStackLayout
+		window.mxCompactTreeLayout = mxCompactTreeLayout
+		window.mxLayoutManager = mxLayoutManager
+		window.mxRubberband = mxRubberband
+		window.mxCell = mxCell
+		window.mxGeometry = mxGeometry
+		window.mxToolbar = mxToolbar
+		window.mxDragSource = mxDragSource
+		window.mxKeyHandler = mxKeyHandler
+		window.mxVertexHandler = mxVertexHandler
+		window.mxEvent = mxEvent
+		window.mxUtils = mxUtils
+	</script>
+	
+    <noscript>
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
