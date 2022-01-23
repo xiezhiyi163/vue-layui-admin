@@ -13,6 +13,7 @@
 						<div class="headimg"></div>
 						<div class="headbtnwrap">
 							<div class="headbtnwrapin">
+								<div class="headbtnitem">当前位置：{{local}}</div>
 								<div class="headbtnitem" @click="opendoc()">admindoc</div>
 								<div class="headbtnitem" @click="loginout()">退出</div>
 							</div>
@@ -89,6 +90,8 @@
 		},
 		data() {
 			return {
+				$layui:'',
+				local:'',//获取当前地理位置
 				root:[],//获取到的权限类型或者名称
 				ifshownav:0,//是否显示左侧导航
 				showleft:1,
@@ -332,24 +335,20 @@
 			},
 			//layui弹框处理
 			opendoc:function(){
-				layui.use(['layer'],()=>{
-					layui.layer.open({
-						title:'项目使用提示',
-						type:2,
-						content:'#/admindoc',
-						move:false
-					})
+				this.$layui.layer.open({
+					title:'项目使用提示',
+					type:2,
+					content:'#/admindoc',
+					move:false
 				})
 			},
 			//退出
 			tologinout:function(){
-				layui.use(['layer'],()=>{
-					layui.layer.msg('成功登出');
-					sessionStorage.removeItem('userroot')
-					setTimeout(()=>{
-						this.$router.replace({'name':'login'})
-					},2000)
-				})
+				this.$layui.layer.msg('成功登出');
+				sessionStorage.removeItem('userroot')
+				setTimeout(()=>{
+					this.$router.replace({'name':'login'})
+				},2000)
 			},
 			loginout:function(){
 				if(this.$route.meta.hasOwnProperty('isform')){
@@ -364,6 +363,55 @@
 				else{
 					this.tologinout()
 				}
+			},
+			//获取当前地理位置
+			localsuccess:function(position){
+				// 返回用户位置
+				// 经度
+				var longitude = position.coords.longitude;
+				// 纬度
+				var latitude = position.coords.latitude;
+				// 根据经纬度获取地理位置，不太准确，获取城市区域还是可以的
+				// var map = new BMapGL.Map("allmap");
+				var point = new BMapGL.Point(longitude, latitude);
+				var gc = new BMapGL.Geocoder();
+				gc.getLocation(point, (rs) => {
+					var addComp = rs.addressComponents;
+					// this.local = addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber;
+					this.local = addComp.city;
+				});
+				// 这里后面可以写你的后续操作了
+			},
+			localerror:function(error){
+				switch (error.code) {
+					case 1:
+						this.$layui.layer.msg('地理位置授权失败')
+						break;
+					case 2:
+						this.$layui.layer.msg('暂时获取不到位置信息！')
+						break;
+					case 3:
+						this.$layui.layer.msg('获取地理位置超时！')
+						break;
+					case 4:
+						this.$layui.layer.msg('未知错误！')
+						break;
+				}
+				// 这里后面可以写你的后续操作了，下面的经纬度是天安门的具体位置
+				// 经度
+				var longitude = 116.404;
+				// 纬度
+				var latitude = 39.915;
+				// 根据经纬度获取地理位置，不太准确，获取城市区域还是可以的
+				// var map = new BMapGL.Map("allmap");
+				var point = new BMapGL.Point(longitude, latitude);
+				var gc = new BMapGL.Geocoder();
+				gc.getLocation(point, (rs) => {
+					var addComp = rs.addressComponents;
+					// this.local = addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber;
+					this.local = addComp.city;
+				});
+				// 这里后面可以写你的后续操作了
 			}
 		},
 		watch:{
@@ -374,19 +422,30 @@
 			}
 		},
 		mounted() {
-			leftclick(0)
-			this.navlist = _rec_routes
-			//重新配置root
-			this.routereset(
-				['index','recurrence','coms','common-coms','swipertest','table_drag_test','jsmindtest','mxgraphtest'],//后台返回的该用户选中的页面
-				()=>{
-					this.rootset(this.navlist)
-					//进来之后如果不是首页就打开对应的
-					var thispath = this.$route.path.split('/')[this.$route.path.split('/').length-1]
-					this.tothispath(thispath)
-					this.ifthisroute()
-				}
-			)
+			layui.use(['layer'],()=>{
+				this.$layui = layui
+				leftclick(0)//传0进去
+				this.navlist = _rec_routes
+				//重新配置root
+				this.routereset(
+					['index','recurrence','coms','common-coms','swipertest','table_drag_test','jsmindtest','mxgraphtest'],//后台返回的该用户选中的页面
+					()=>{
+						this.rootset(this.navlist)
+						//进来之后如果不是首页就打开对应的
+						var thispath = this.$route.path.split('/')[this.$route.path.split('/').length-1]
+						this.tothispath(thispath)
+						this.ifthisroute()
+						//获取当前地理位置
+							if(BMapGL){
+								navigator.geolocation.getCurrentPosition((position) => {
+									this.localsuccess(posi)
+								},(error) => {
+									this.localerror(error)
+								})
+							}
+					}
+				)
+			})
 		}
 	};
 </script>

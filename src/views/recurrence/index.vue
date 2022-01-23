@@ -16,6 +16,7 @@
 	export default {
 		data(){
 			return {
+				$layui:'',
 				ifdone:1,
 				theroot:{
 					a:['admin']
@@ -25,36 +26,35 @@
 		methods:{
 			setchecktree:function(){
 				//渲染树
-				layui.use(['tree'],()=>{
-					layui.tree.render({
-						elem: '#checktree'
-						,data: _rec_routes
-						,id: 'trees'
-						,showCheckbox: true
-					});
-					layui.tree.setChecked('trees', ['index','recurrence','coms','swipertest','table_drag_test'])
-				})
+				this.$layui.tree.render({
+					elem: '#checktree'
+					,data: _rec_routes
+					,id: 'trees'
+					,showCheckbox: true
+				});
+				this.$layui.tree.setChecked('trees', ['index','recurrence','coms','swipertest','table_drag_test'])
 			},
 			getchecktreedata:function(){
-				layui.use(['tree','layer'],()=>{
-					var submitarr = []
-					var templist = layui.tree.getChecked('trees')
-					var setroot = (list) => {
-						for(var i in list){
-							submitarr.push(list[i].name)
-							if(list[i].children){
-								setroot(list[i].children)
-							}
+				var submitarr = []
+				var templist = layui.tree.getChecked('trees')
+				var setroot = (list) => {
+					for(var i in list){
+						submitarr.push(list[i].name)
+						if(list[i].children){
+							setroot(list[i].children)
 						}
-						return list
 					}
-					setroot(templist)
-					layui.layer.msg('提交权限配置到对应角色权限')
-				})
+					return list
+				}
+				setroot(templist)
+				this.$layui.layer.msg('提交权限配置到对应角色权限')
 			},
 		},
 		mounted() {
-			this.setchecktree()
+			layui.use(['layer','tree'],()=>{
+				this.$layui = layui
+				this.setchecktree()
+			})
 		}
 	}
 </script>

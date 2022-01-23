@@ -29,6 +29,12 @@
 				<div style="clear: both;"></div>		
 			</div>
 			<!-- == -->
+			<div class="smalltitle2">错位模板</div>
+			<div class="pad">
+				<sign></sign>
+				<signcss></signcss>
+			</div>
+			<!-- == -->
 			<div class="smalltitle2">上传和断点上传以及表格处理不做封装，太多的不确定性因素，表格的需求问题可能导致是否可直接使用UI框架或插件来开发表格，表格应该正常的处理方式是，循环tr，然后根据数据处理表头大的分类</div>
 			<div class="smalltitle2">表格可拖拽去模板里面找</div>
 		  </div>
@@ -41,6 +47,8 @@
 import detail from "@/components/subcoms/detail.vue";
 import detailimgtop from "@/components/subcoms/detailimg-top.vue";
 import iconincenter from "@/components/subcoms/icon_in_center.vue";
+import sign from "@/components/subcoms/sign.vue";
+import signcss from "@/components/subcoms/sign-css.vue";
 
 export default {
   name: "Home",
@@ -48,6 +56,8 @@ export default {
     detail,
 	detailimgtop,
 	iconincenter,
+	sign,
+	signcss
   },
 };
 </script>

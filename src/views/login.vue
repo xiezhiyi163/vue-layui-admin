@@ -73,19 +73,25 @@
 
 <script>
 	export default {
+		data(){
+			return {
+				$layui:''
+			}
+		},
 		methods:{
 			toindex:function(){
 				//模拟登录拿到root
 				sessionStorage.setItem('userroot','admin')
-				layer.msg('登陆成功');
+				this.$layui.layer.msg('登陆成功');
 				setTimeout(()=>{
 					this.$router.replace({'name':'Home'})
 				},2000)
 			}
 		},
 		mounted(){
-			layui.use(['form'],()=>{
-				var form = layui.form
+			layui.use(['form','layer'],()=>{
+				this.$layui = layui
+				var form = this.$layui.form
 				form.render()
 			})
 		}
