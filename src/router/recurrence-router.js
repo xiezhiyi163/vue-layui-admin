@@ -35,7 +35,21 @@ var _rec_routes = [
 			icon:require('../assets/about.png')
 		},
 		component: () => import( /* webpackChunkName: "about" */ "../views/_.vue"),
-		children: [{
+		children: [
+			{
+				path: "common-coms",
+				name: "common-coms",
+				id: 'common-coms', //和name一样，设置权限要用到
+				title: 'pc常用组件',
+				root: [],
+				navicon:{
+					type:'img',
+					icon:require('../assets/about.png')
+				},
+				component: () => import( /* webpackChunkName: "about" */
+					"../views/common-coms/index.vue"),
+			},
+			{
 				path: "swipertest",
 				name: "swipertest",
 				id: 'swipertest', //和name一样，设置权限要用到

@@ -375,10 +375,10 @@
 		},
 		mounted() {
 			leftclick(0)
-			this.navlist = [_routes[1]]
+			this.navlist = _rec_routes
 			//重新配置root
 			this.routereset(
-				['index','recurrence','coms','swipertest','table_drag_test','jsmindtest','mxgraphtest'],//后台返回的该用户选中的页面
+				['index','recurrence','coms','common-coms','swipertest','table_drag_test','jsmindtest','mxgraphtest'],//后台返回的该用户选中的页面
 				()=>{
 					this.rootset(this.navlist)
 					//进来之后如果不是首页就打开对应的

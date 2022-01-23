@@ -145,7 +145,7 @@
 <style scoped="scoped">
 	.item {
 		position: relative;
-		padding: 14px 15px 14px 0;
+		padding: 14px 15px;
 		min-height: 21px;
 		word-break: break-all;
 		color: white;
