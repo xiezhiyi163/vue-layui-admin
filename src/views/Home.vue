@@ -438,7 +438,7 @@
 						//获取当前地理位置
 							if(BMapGL){
 								navigator.geolocation.getCurrentPosition((position) => {
-									this.localsuccess(posi)
+									this.localsuccess(position)
 								},(error) => {
 									this.localerror(error)
 								})
