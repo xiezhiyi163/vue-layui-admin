@@ -9,6 +9,7 @@
 </template>
 
 <script>
+	import {maketoolbar,settoolbar} from './basefn.js'
 	export default {
 		data(){
 			return {
@@ -17,178 +18,21 @@
 		},
 		methods:{
 			toinitgraph:function(){
-				
-				//悬浮可以出现元素操作工具的方法===
-				// Defines a subclass for mxVertexHandler that adds a set of clickable
-				// icons to every selected vertex.
-				function mxVertexToolHandler(state)
-				{
-					mxVertexHandler.apply(this, arguments);
-				};
-				
-				mxVertexToolHandler.prototype = new mxVertexHandler();
-				mxVertexToolHandler.prototype.constructor = mxVertexToolHandler;
-				
-				mxVertexToolHandler.prototype.domNode = null;
-				
-				mxVertexToolHandler.prototype.init = function()
-				{
-					mxVertexHandler.prototype.init.apply(this, arguments);
-				
-					// In this example we force the use of DIVs for images in IE. This
-					// handles transparency in PNG images properly in IE and fixes the
-					// problem that IE routes all mouse events for a gesture via the
-					// initial IMG node, which means the target vertices 
-					this.domNode = document.createElement('div');
-					this.domNode.style.position = 'absolute';
-					this.domNode.style.whiteSpace = 'nowrap';
-					
-					// Workaround for event redirection via image tag in quirks and IE8
-					function createImage(src)
-					{
-						if (mxClient.IS_IE && !mxClient.IS_SVG)
-						{
-							var img = document.createElement('div');
-							img.style.backgroundImage = 'url(' + src + ')';
-							img.style.backgroundPosition = 'center';
-							img.style.backgroundRepeat = 'no-repeat';
-							img.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
-							
-							return img;
-						}
-						else
-						{
-							return mxUtils.createImage(src);
-						}
-					};
-				
-					// Delete
-					var img = createImage('mxgraph-master/javascript/examples/images/delete2.png');
-					img.setAttribute('title', 'Delete');
-					img.style.cursor = 'pointer';
-					img.style.width = '16px';
-					img.style.height = '16px';
-					mxEvent.addGestureListeners(img,
-						mxUtils.bind(this, function(evt)
-						{
-							// Disables dragging the image
-							mxEvent.consume(evt);
-						})
-					);
-					mxEvent.addListener(img, 'click',
-						mxUtils.bind(this, function(evt)
-						{
-							this.graph.removeCells([this.state.cell]);
-							mxEvent.consume(evt);
-						})
-					);
-					this.domNode.appendChild(img);
-				
-					// Size
-					var img = createImage('mxgraph-master/javascript/examples/images/fit_to_size.png');
-					img.setAttribute('title', 'Resize');
-					img.style.cursor = 'se-resize';
-					img.style.width = '16px';
-					img.style.height = '16px';
-					mxEvent.addGestureListeners(img,
-						mxUtils.bind(this, function(evt)
-						{
-							this.start(mxEvent.getClientX(evt), mxEvent.getClientY(evt), 7);
-							this.graph.isMouseDown = true;
-							this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
-							mxEvent.consume(evt);
-						})
-					);
-					this.domNode.appendChild(img);
-				
-					// Move
-					var img = createImage('mxgraph-master/javascript/examples/images/plus.png');
-					img.setAttribute('title', 'Move');
-					img.style.cursor = 'move';
-					img.style.width = '16px';
-					img.style.height = '16px';
-					mxEvent.addGestureListeners(img,
-						mxUtils.bind(this, function(evt)
-						{
-							this.graph.graphHandler.start(this.state.cell,
-								mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-							this.graph.graphHandler.cellWasClicked = true;
-							this.graph.isMouseDown = true;
-							this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
-							mxEvent.consume(evt);
-						})
-					);
-					this.domNode.appendChild(img);
-				
-					// Connect
-					var img = createImage('mxgraph-master/javascript/examples/images/check.png');
-					img.setAttribute('title', 'Connect');
-					img.style.cursor = 'pointer';
-					img.style.width = '16px';
-					img.style.height = '16px';
-					mxEvent.addGestureListeners(img,
-						mxUtils.bind(this, function(evt)
-						{
-							var pt = mxUtils.convertPoint(this.graph.container,
-									mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-							this.graph.connectionHandler.start(this.state, pt.x, pt.y);
-							this.graph.isMouseDown = true;
-							this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
-							mxEvent.consume(evt);
-						})
-					);
-					this.domNode.appendChild(img);
-					
-					this.graph.container.appendChild(this.domNode);
-					this.redrawTools();
-				};
-				
-				mxVertexToolHandler.prototype.redraw = function()
-				{
-					mxVertexHandler.prototype.redraw.apply(this);
-					this.redrawTools();
-				};
-				
-				mxVertexToolHandler.prototype.redrawTools = function()
-				{
-					if (this.state != null && this.domNode != null)
-					{
-						var dy = (mxClient.IS_VML && document.compatMode == 'CSS1Compat') ? 20 : 4;
-						this.domNode.style.left = (this.state.x + this.state.width - 56) + 'px';
-						this.domNode.style.top = (this.state.y + this.state.height + dy) + 'px';
-					}
-				};
-				
-				mxVertexToolHandler.prototype.destroy = function(sender, me)
-				{
-					mxVertexHandler.prototype.destroy.apply(this, arguments);
-				
-					if (this.domNode != null)
-					{
-						this.domNode.parentNode.removeChild(this.domNode);
-						this.domNode = null;
-					}
-				};
-				
-				//初始化工具栏===
-				
-				// Creates new toolbar without event processing
-				var toolbar = new mxToolbar(document.getElementById('btnwrap'));
-				toolbar.enabled = false
-				
-				var model = new mxGraphModel();
+				maketoolbar();
+				var toolbar2 = settoolbar(document.getElementById('btnwrap'))
 				
 				//初始化界面===
 				
 				var container = document.getElementById('mxgraph-demo')
 				var themodel = new mxGraphModel();
-				var initgraph = new mxGraph(container,themodel)//不能保存初始化到vue的data
+				window.initgraph = new mxGraph(container,themodel)//不能保存初始化到vue的data
 				initgraph.dropEnabled = true;
 				initgraph.connectionHandler.createTarget = true;
 				
-				// initgraph.setConnectable(true);
+				initgraph.setConnectable(true);
+				initgraph.setHtmlLabels(true);
 
-				var parent = initgraph.getDefaultParent()//父级容器
+				window.parent = initgraph.getDefaultParent()//父级容器
 				var model = initgraph.getModel()
 				
 				//挂载悬浮出现工具的方法
@@ -219,7 +63,7 @@
 				
 				//生成按钮===
 				
-				function addToolbarItem(graph, toolbar, prototype, image)
+				function addToolbarItem(graph, toolbar2, prototype, image)
 				{
 					// Function that is executed when the image is dropped on
 					// the graph. The cell argument points to the cell under
@@ -237,7 +81,7 @@
 					}
 				
 					// Creates the image which is used as the drag icon (preview)
-					var img = toolbar.addMode(null, image, funct);
+					var img = toolbar2.addMode(null, image, funct);
 					mxUtils.makeDraggable(img, graph, funct);
 				}
 				
@@ -246,7 +90,7 @@
 					var vertex = new mxCell(null, new mxGeometry(0, 0, w, h), style);
 					vertex.setVertex(true);
 				
-					addToolbarItem(initgraph, toolbar, vertex, icon);
+					addToolbarItem(initgraph, toolbar2, vertex, icon);
 				};
 				
 				addVertex('mxgraph-master/javascript/src/images/left-icon/swimlane.gif', 120, 160, 'shape=swimlane;startSize=20;');
@@ -313,20 +157,86 @@
 				//视图监听开始===
 				model.beginUpdate()
 				
+				//图片和图片关联文字的样式设定===
+				
+				var style4 = {}
+				style4[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_IMAGE;
+				style4[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
+				style4[mxConstants.STYLE_IMAGE] = 'mxgraph-master/javascript/src/images/keys.png';
+				style4[mxConstants.STYLE_FONTCOLOR] = '#FFFFFF';
+				initgraph.getStylesheet().putCellStyle('image', style4);
+				
+				var style5 = {}
+				style5[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_LABEL;
+				style5[mxConstants.STYLE_STROKECOLOR] = '#000000';
+				style5[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
+				style5[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+				style5[mxConstants.STYLE_IMAGE_ALIGN] = mxConstants.ALIGN_CENTER;
+				style5[mxConstants.STYLE_IMAGE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+				style5[mxConstants.STYLE_IMAGE] = 'mxgraph-master/javascript/src/images/keys.png';
+				style5[mxConstants.STYLE_IMAGE_WIDTH] = '38';
+				style5[mxConstants.STYLE_IMAGE_HEIGHT] = '38';
+				style5[mxConstants.STYLE_SPACING_TOP] = '56';
+				style5[mxConstants.STYLE_SPACING] = '10';
+				initgraph.getStylesheet().putCellStyle('image-bottomtext', style5);
+				
+				var style6 = {}
+				style6[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_LABEL;
+				style6[mxConstants.STYLE_STROKECOLOR] = '#000000';
+				style6[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
+				style6[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+				style6[mxConstants.STYLE_IMAGE_ALIGN] = mxConstants.ALIGN_CENTER;
+				style6[mxConstants.STYLE_IMAGE_VERTICAL_ALIGN] = mxConstants.ALIGN_BOTTOM;
+				style6[mxConstants.STYLE_IMAGE] = 'mxgraph-master/javascript/src/images/keys.png';
+				style6[mxConstants.STYLE_IMAGE_WIDTH] = '38';
+				style6[mxConstants.STYLE_IMAGE_HEIGHT] = '38';
+				style6[mxConstants.STYLE_SPACING] = '10';
+				initgraph.getStylesheet().putCellStyle('image-toptext', style6);
+				
+				var style7 = {}
+				style7[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_LABEL;
+				style7[mxConstants.STYLE_STROKECOLOR] = '#000000';
+				style7[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
+				style7[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
+				style7[mxConstants.STYLE_IMAGE_ALIGN] = mxConstants.ALIGN_LEFT;
+				style7[mxConstants.STYLE_IMAGE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
+				style7[mxConstants.STYLE_IMAGE] = 'mxgraph-master/javascript/src/images/keys.png';
+				style7[mxConstants.STYLE_IMAGE_WIDTH] = '38';
+				style7[mxConstants.STYLE_IMAGE_HEIGHT] = '38';
+				style7[mxConstants.STYLE_SPACING_LEFT] = '50';
+				style7[mxConstants.STYLE_SPACING] = '10';
+				initgraph.getStylesheet().putCellStyle('image-righttext', style7);
+				
+				var style8 = {}
+				style8[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_LABEL;
+				style8[mxConstants.STYLE_STROKECOLOR] = '#000000';
+				style8[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_RIGHT;
+				style8[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
+				style8[mxConstants.STYLE_IMAGE_ALIGN] = mxConstants.ALIGN_RIGHT;
+				style8[mxConstants.STYLE_IMAGE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
+				style8[mxConstants.STYLE_IMAGE] = 'mxgraph-master/javascript/src/images/keys.png';
+				style8[mxConstants.STYLE_IMAGE_WIDTH] = '38';
+				style8[mxConstants.STYLE_IMAGE_HEIGHT] = '38';
+				style8[mxConstants.STYLE_SPACING_RIGHT] = '50';
+				style8[mxConstants.STYLE_SPACING] = '10';
+				initgraph.getStylesheet().putCellStyle('image-lefttext', style8);
+				
 				try{
 					
-					var subparent = initgraph.insertVertex(parent,null,'subparent',160,50,80,80,'fillColor=#ececec;strokeColor=white;')
-					var subparent2 = initgraph.insertVertex(parent,null,'subparent2',260,250,80,80,'fillColor=#ececec;strokeColor=white;')
+					window.subparent = initgraph.insertVertex(parent,null,'subparent',160,50,80,80,'fillColor=#ececec;strokeColor=white;')
+					window.subparent2 = initgraph.insertVertex(parent,null,'subparent2',260,250,80,80,'fillColor=#ececec;strokeColor=white;')
 					
 					//方式1追加(实际上就是方式2的拆分)
 					var child1 = new mxCell('盒子1',new mxGeometry(130,20,80,30),'fillColor=skyblue;strokeColor=white;');
 					child1.setVertex(true);
 					child1.geometry.relative = false//设置这个，元素不能移动，false可以移动
 					model.add(subparent,child1)//往父级容器里面追加元素
+					
 					//方式2追加
-					var child2 = initgraph.insertVertex(subparent,null,'盒子2',260,20,80,30,'fillColor=skyblue;strokeColor=white;')
+					var child2 = initgraph.insertVertex(subparent,null,'盒子2',260,20,80,30,'fillColor=skyblue;strokeColor=white;whiteSpace=wrap;')
 					var child2a = initgraph.insertVertex(subparent2,null,'盒子2a',260,20,80,30,'fillColor=skyblue;strokeColor=white;')
 					var child3 = initgraph.insertVertex(subparent,null,'盒子3',0,20,80,30,'fillColor=skyblue;strokeColor=white;')
+					
 					//方式追加3
 					var child4 = initgraph.insertVertex(subparent2,null,((function(){
 						var doc = mxUtils.createXmlDocument();
@@ -335,6 +245,15 @@
 						docel.setAttribute(key2,'2');
 						return docel;
 					})()),0,30,80,30,'fillColor=skyblue;strokeColor=white;')
+					
+					//方式追加4，图片追加
+					var child5 = initgraph.insertVertex(parent,null,'',0,0,100,100,'image')
+					//方式追加5，图片和文字追加
+					var child6 = initgraph.insertVertex(parent,null,'111',0,100,100,100,'image-bottomtext')
+					var child7 = initgraph.insertVertex(parent,null,'111',0,200,100,100,'image-toptext')
+					var child8 = initgraph.insertVertex(parent,null,'111',0,300,100,100,'image-righttext')
+					var child9 = initgraph.insertVertex(parent,null,'111',0,400,100,100,'image-lefttext')
+					
 					//连接方式
 					var el = initgraph.insertEdge(subparent,null,'连接',child1,child2,'edgeStyle=orthogonalEdgeStyle;')
 					var el2 = initgraph.insertEdge(subparent,null,'',child3,child1,'edgeStyle=orthogonalEdgeStyle;')

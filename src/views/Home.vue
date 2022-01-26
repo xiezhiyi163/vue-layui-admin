@@ -1,5 +1,5 @@
 <template>
-	<div class="home">
+	<div class="home" :style="{visibility: ifhidden}">
 		<div class="top" style="min-width: 355px;">
 			<div class="topin" :style="{marginLeft:showleft?'':(subshowleft?'':'0px'),boxShadow:(!showleft?'0 0 10px 0 #333':'')}">
 				<div class="menuicon" v-show="showleft" @click="ifshownavs()">&equiv;</div>
@@ -14,6 +14,7 @@
 						<div class="headbtnwrap">
 							<div class="headbtnwrapin">
 								<div class="headbtnitem">当前位置：{{local}}</div>
+								<div class="headbtnitem">倒计时：<br/>{{timedown}}</div>
 								<div class="headbtnitem" @click="opendoc()">admindoc</div>
 								<div class="headbtnitem" @click="loginout()">退出</div>
 							</div>
@@ -90,7 +91,10 @@
 		},
 		data() {
 			return {
+				ifhidden:'hidden',
 				$layui:'',
+				timedown:'',
+				timedownfn:'',
 				local:'',//获取当前地理位置
 				root:[],//获取到的权限类型或者名称
 				ifshownav:0,//是否显示左侧导航
@@ -134,6 +138,7 @@
 				}
 				fns(_rec_routes)
 				var res = res.constructor.toString().indexOf('Array')==-1?arr:res
+				if(res.indexOf('index')==-1){res = ['index'].concat(res)};
 				this.root = userroot||'admin'//这个是登录后后台返回的，只需要返回一个
 				//递归处理root
 				var templist = this.navlist
@@ -155,6 +160,23 @@
 				this.navlist = setroot(templist)
 				//回调
 				fn()
+			},
+			routeresetcb:function(){
+				this.rootset(this.navlist)
+				//进来之后如果不是首页就打开对应的
+				var thispath = this.$route.path.split('/')[this.$route.path.split('/').length-1]
+				this.tothispath(thispath)
+				this.ifthisroute()
+				//获取当前地理位置
+				if(BMapGL){
+					navigator.geolocation.getCurrentPosition((position) => {
+						this.localsuccess(position)
+					},(error) => {
+						this.localerror(error)
+					})
+				}
+				//倒计时
+				this.totimedown()
 			},
 			
 			
@@ -412,6 +434,44 @@
 					this.local = addComp.city;
 				});
 				// 这里后面可以写你的后续操作了
+			},
+			//倒计时
+			totimedown:function(){
+				var _this = this;
+				function Timedown(times){
+					this.state = ()=>{
+						return {
+							alltime:times
+						}
+					}
+					this.allstate = this.state()
+					this.countdown = function(){
+						/* 时间戳 */
+						var timestrmp = new Date(this.allstate.alltime).getTime() - new Date().getTime() 		
+						// 总秒数
+						var second = Math.floor(timestrmp / 1000);
+						
+						// 天数
+						var day = Math.floor(second / 3600 / 24);
+						// 小时
+						var hr = Math.floor(second / 3600 % 24);
+						// 分钟
+						var min = Math.floor(second / 60 % 60);
+						// 秒
+						var sec = Math.floor(second % 60);
+						
+						_this.timedown = day + '天' + hr + '小时' + min + '分' + sec + '秒'
+						
+						if(timestrmp>0){
+							setTimeout(()=>{
+								this.countdown()
+							},1000)
+						}
+						
+					}
+				}
+				this.timedownfn = new Timedown('10000-12-31')
+				this.timedownfn.countdown()
 			}
 		},
 		watch:{
@@ -424,26 +484,13 @@
 		mounted() {
 			layui.use(['layer'],()=>{
 				this.$layui = layui
+				this.ifhidden = 'visible'
 				leftclick(0)//传0进去
 				this.navlist = _rec_routes
 				//重新配置root
 				this.routereset(
-					['index','recurrence','coms','common-coms','swipertest','table_drag_test','jsmindtest','mxgraphtest'],//后台返回的该用户选中的页面
-					()=>{
-						this.rootset(this.navlist)
-						//进来之后如果不是首页就打开对应的
-						var thispath = this.$route.path.split('/')[this.$route.path.split('/').length-1]
-						this.tothispath(thispath)
-						this.ifthisroute()
-						//获取当前地理位置
-							if(BMapGL){
-								navigator.geolocation.getCurrentPosition((position) => {
-									this.localsuccess(position)
-								},(error) => {
-									this.localerror(error)
-								})
-							}
-					}
+					['index','recurrence','coms','common-coms','timedown','swipertest','table_drag_test','jsmindtest','mxgraphtest'],//后台返回的该用户选中的页面
+					this.routeresetcb
 				)
 			})
 		}

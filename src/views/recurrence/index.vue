@@ -25,6 +25,22 @@
 		},
 		methods:{
 			setchecktree:function(){
+				var temp = ['index','recurrence','coms','swipertest','table_drag_test']
+				//是否是导航处理
+				var ifnavsub = []
+				function fns(list){
+					list.map(item=>{if(item.children){ifnavsub.push(item.name);fns(item.children)}})
+				}
+				fns(_rec_routes)
+				//删除是导航的name
+				function fns2(){
+					ifnavsub.map(item=>{
+						if(temp.indexOf(item)!=-1){
+							temp.splice(temp.indexOf(item),1)
+						}
+					})
+				}
+				fns2()
 				//渲染树
 				this.$layui.tree.render({
 					elem: '#checktree'
@@ -32,11 +48,11 @@
 					,id: 'trees'
 					,showCheckbox: true
 				});
-				this.$layui.tree.setChecked('trees', ['index','recurrence','coms','swipertest','table_drag_test'])
+				this.$layui.tree.setChecked('trees', temp)
 			},
 			getchecktreedata:function(){
 				var submitarr = []
-				var templist = layui.tree.getChecked('trees')
+				var templist = this.$layui.tree.getChecked('trees')
 				var setroot = (list) => {
 					for(var i in list){
 						submitarr.push(list[i].name)

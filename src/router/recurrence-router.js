@@ -50,6 +50,19 @@ var _rec_routes = [
 					"../views/common-coms/index.vue"),
 			},
 			{
+				path: "timedown",
+				name: "timedown",
+				id: 'timedown', //和name一样，设置权限要用到
+				title: '倒计时',
+				root: [],
+				navicon:{
+					type:'img',
+					icon:require('../assets/about.png')
+				},
+				component: () => import( /* webpackChunkName: "about" */
+					"../views/timedown/index.vue"),
+			},
+			{
 				path: "swipertest",
 				name: "swipertest",
 				id: 'swipertest', //和name一样，设置权限要用到

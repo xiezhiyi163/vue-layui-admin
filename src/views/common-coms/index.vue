@@ -1,6 +1,6 @@
 <template>
 	<div class="main">
-		<div style="background-color: white;">
+		<div class="wrap">
 		  <div class="home">
 			<div class="nav">
 				<div class="nav navfix">
@@ -64,7 +64,12 @@ export default {
 
 <style scoped>
 	.main {
+		padding-top: 20px;
+	}
+	.wrap {
+		margin: 0 20px 20px;
 		padding: 20px;
+		background-color: white;
 	}
 	.home {
 		max-width: 1200px;

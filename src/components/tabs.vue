@@ -79,12 +79,6 @@
 						tabs_sliderwrap.style.left = -(tabs_sliderwrap.offsetWidth - tabs_subwrap.offsetWidth)+'px'
 					}
 				}
-				//递归
-				setTimeout(()=>{
-					if(this.listenwidth && document.querySelectorAll('.tabs_subwrap')[0]){
-						this.listenwidth()
-					}
-				},100)
 			},
 			toleft:function(){
 				const tabs_sliderwrap = document.querySelectorAll('.tabs_sliderwrap')[0]
@@ -159,6 +153,11 @@
 		},
 		mounted(){
 			this.listenwidth()
+			window.addEventListener('resize',()=>{
+				if(this.listenwidth && document.querySelectorAll('.tabs_subwrap')[0]){
+					this.listenwidth()
+				}
+			})
 		}
 	}
 </script>
