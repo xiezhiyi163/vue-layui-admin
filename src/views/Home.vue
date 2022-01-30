@@ -6,8 +6,8 @@
 				<div class="menuicon2" v-show="showleft">&equiv;</div>
 				<div class="menuicon2" v-show="subshowleft">&equiv;</div>
 				<div class="title" :style="{marginLeft:(showleft||(!showleft&&subshowleft))?'':'20px'}">
-					<span :style="{display:showleft?'none':(subshowleft?'none':'')}" class="titlein" @click="$router.replace({name:'index'})">组件管理系统 </span>
-					<a :style="{display:showleft?'none':(subshowleft?'none':'')}">>>> </a>
+					<span :style="{display:showleft?(minsize?'':'none'):(subshowleft?(minsize?'':'none'):'')}" class="titlein" @click="$router.replace({name:'index'})">组件管理系统 </span>
+					<a :style="{display:showleft?(minsize?'':'none'):(subshowleft?(minsize?'':'none'):'')}">>>> </a>
 					<div style="display: inline;" v-if="titlelist.length!=0">
 						<div style="display: inline;" v-for="(v,i) in titlelist">
 							<div style="display: inline;" v-if="titlelist.length == 1">{{v}}</div>
@@ -107,6 +107,7 @@
 		},
 		data() {
 			return {
+				minsize:0,//屏幕最小尺寸的标识，1为小于最小尺寸
 				ifhidden:'hidden',
 				$layui:'',
 				timedown:'',
@@ -202,6 +203,9 @@
 				var winwidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
 				if(winwidth>760){
 					this.ifshownav = 0
+					this.minsize = 0
+				}else{
+					this.minsize = 1
 				}
 			},
 			//idlist处理成对象数组
