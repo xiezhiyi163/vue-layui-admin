@@ -1,13 +1,13 @@
 <template>
 	<div class="home" :style="{visibility: ifhidden}">
-		<div class="top" style="min-width: 355px;">
-			<div class="topin" :style="{marginLeft:showleft?'':(subshowleft?'':'0px'),boxShadow:(!showleft?'0 0 10px 0 #333':'')}">
+		<div class="top" style="min-width: 355px;" :style="{zIndex:top_max_zindex?20:8}">
+			<div class="topin" :style="{marginLeft:top_max_zindex?'0px':(showleft?'':(subshowleft?'':'0px')),boxShadow:top_max_zindex?'0 0 10px 0 #775a94':(!showleft?'0 0 10px 0 #333':'')}">
 				<div class="menuicon" v-show="showleft||(!showleft&&subshowleft)" @click="ifshownavs()">&equiv;</div>
 				<div class="menuicon2" v-show="showleft">&equiv;</div>
 				<div class="menuicon2" v-show="subshowleft">&equiv;</div>
 				<div class="title" :style="{marginLeft:(showleft||(!showleft&&subshowleft))?'':'20px'}">
-					<span :style="{display:showleft?(minsize?'':'none'):(subshowleft?(minsize?'':'none'):'')}" class="titlein" @click="$router.replace({name:'index'})">组件管理系统 </span>
-					<a :style="{display:showleft?(minsize?'':'none'):(subshowleft?(minsize?'':'none'):'')}">>>> </a>
+					<span :style="{display:top_max_zindex?'':(showleft?(minsize?'':'none'):(subshowleft?(minsize?'':'none'):''))}" class="titlein" @click="$router.replace({name:'index'})">组件管理系统 </span>
+					<a :style="{display:top_max_zindex?'':(showleft?(minsize?'':'none'):(subshowleft?(minsize?'':'none'):''))}">>>> </a>
 					<div style="display: inline;" v-if="titlelist.length!=0">
 						<div style="display: inline;" v-for="(v,i) in titlelist">
 							<div style="display: inline;" v-if="titlelist.length == 1">{{v}}</div>
@@ -107,6 +107,7 @@
 		},
 		data() {
 			return {
+				top_max_zindex:0,//1的时候，顶部位于最顶层
 				minsize:0,//屏幕最小尺寸的标识，1为小于最小尺寸
 				ifhidden:'hidden',
 				$layui:'',
