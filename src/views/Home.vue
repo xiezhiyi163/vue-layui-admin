@@ -5,7 +5,15 @@
 				<div class="menuicon" v-show="showleft" @click="ifshownavs()">&equiv;</div>
 				<div class="menuicon2" v-show="showleft">&equiv;</div>
 				<div class="menuicon2" v-show="subshowleft">&equiv;</div>
-				<div class="title" :style="{marginLeft:showleft?'':'20px'}"><span class="titlein" @click="$router.replace({name:'index'})">组件管理系统 </span><a>>>></a> {{activetitle}}</div>
+				<div class="title" :style="{marginLeft:showleft?'':'20px'}">
+					<span class="titlein" @click="$router.replace({name:'index'})">组件管理系统 </span>
+					<a>>>> </a>
+					<div style="display: inline;" v-for="(v,i) in titlelist">
+						<div style="display: inline;" v-if="titlelist.length == 1">{{v}}</div>
+						<div style="display: inline;" v-else-if="titlelist.length != 1&&i!=titlelist.length-1">{{v}} / </div>
+						<div style="display: inline;" v-else-if="i==titlelist.length-1">{{v}}</div>
+					</div>
+				</div>
 				<div class="rightbtns">
 					<!-- 顶部的附加按钮 -->
 					<searchbar @additems="additem" v-if="showleft?true:(subshowleft?true:false)"></searchbar>
@@ -104,6 +112,7 @@
 				navlist: [/* 路由的name属性 直接配置到 tablist的id和name那里 路由动态配置的show就是路由是否显示(或者可以用其他方式) */],
 				//点击子集之后的父级idlist
 				idlist:[],
+				titlelist:[],
 				//权限处理完毕
 				load:0,
 				
@@ -180,6 +189,22 @@
 			},
 			
 			
+			//idlist处理成对象数组
+			settitlelist:function(){
+				this.titlelist = []
+				var arr = []
+				function fn(list){
+					list.map(item=>{arr.push({title:item.title,id:item.id});if(item.children){fn(item.children)}})
+				}
+				fn(_rec_routes)
+				for(var i in this.idlist){
+					for(var k=0;k<arr.length;k++){
+						if(this.idlist[i] == arr[k].id){
+							this.titlelist.push(arr[k].title)
+						}
+					}
+				}
+			},
 			//选项卡处理
 			toadditem: function(obj,nav,ifgetquery){
 				var hadtab = 0
@@ -195,7 +220,10 @@
 				
 				//获取当前和父级相同属性，写到一个数组用于子层级的父级匹配
 				
-				this.idlist = getthisandparent()(_routes[1].children,obj.name,'name')
+				this.idlist = getthisandparent()(_rec_routes,obj.name,'name')
+				
+				//idlist处理成对象数组
+				this.settitlelist()
 				
 				//追加item
 				if(nav){
@@ -250,11 +278,17 @@
 					if (this.tablist[data.ind]) {
 						this.activeid = this.tablist[data.ind].id
 						this.activetitle = this.tablist[data.ind].name
-						this.idlist = getthisandparent()(_routes[1].children,this.tablist[data.ind].name,'name')
+						this.idlist = getthisandparent()(_rec_routes,this.tablist[data.ind].name,'name')
+						
+						//idlist处理成对象数组
+						this.settitlelist()
 					} else {
 						this.activeid = this.tablist[data.ind - 1].id
 						this.activetitle = this.tablist[data.ind - 1].name
-						this.idlist = getthisandparent()(_routes[1].children,this.tablist[data.ind - 1].name,'name')
+						this.idlist = getthisandparent()(_rec_routes,this.tablist[data.ind - 1].name,'name')
+						
+						//idlist处理成对象数组
+						this.settitlelist()
 					}
 				}
 				//跳转
@@ -279,7 +313,10 @@
 					
 					//获取当前和父级相同属性，写到一个数组用于子层级的父级匹配
 					
-					this.idlist = getthisandparent()(_routes[1].children,this.tablist[data.ind].id,'name')
+					this.idlist = getthisandparent()(_rec_routes,this.tablist[data.ind].id,'name')
+					
+					//idlist处理成对象数组
+					this.settitlelist()
 					//跳转
 					var query = {}
 					if(this.$route.query){
@@ -313,6 +350,7 @@
 					this.activeid = 'index'
 					this.activetitle = '首页'
 					this.idlist = []
+					this.titlelist = []
 					var query = {}
 					if(this.$route.query){
 						query = this.$route.query

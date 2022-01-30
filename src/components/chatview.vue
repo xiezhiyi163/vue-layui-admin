@@ -8,7 +8,7 @@
 				<i class="fa fa-comments" aria-hidden="true"></i>
 			</div>
 		</div>
-		<div class="btn" style="right: 0;left: auto;margin-top: 60px;" v-if="ifshowchat == 2" @click="ifshowchat == 1?ifshowchat = 2:ifshowchat = 1">
+		<div class="btn" style="right: 0;left: auto;margin-top: 60px;position: fixed;" v-if="ifshowchat == 2" @click="ifshowchat == 1?ifshowchat = 2:ifshowchat = 1">
 			<i class="fa fa-comments" aria-hidden="true"></i>
 		</div>
 	</div>
