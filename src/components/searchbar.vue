@@ -104,13 +104,13 @@
 		position: relative;
 		display: inline-block;
 		margin-right: 15px;
-		line-height: 60px;
-		font-size: 20px;
+		line-height: 40px;
+		font-size: 16px;
 		color: white;
 	}
 	.searchbar {
 		position: absolute;
-		top: 48px;
+		top: 38px;
 		right: 0;
 		width: 300px;
 		min-height: 40px;

@@ -4,7 +4,7 @@
 			<div v-if="item.children.length == 1">
 				<div v-if="item.show">
 					
-					<div class="item" v-if="item.children[0].root != -1" @click.stop="toadditem(item.children[0])">
+					<div class="item" :style="{backgroundColor:tabsactive == item.name?'#57477a':''}" v-if="item.children[0].root != -1" @click.stop="toadditem(item.children[0])">
 						<div class="itemdiv" style="padding-left: 20px;" :style="{marginLeft:index*20+'px',color:tabsactive == item.children[0].name?'yellow':''}">
 							<div class="itemimg">
 								<img v-if="item.navicon.type == 'img'" :src="item.navicon.icon" />
@@ -20,7 +20,7 @@
 				<div v-if="s">
 					<div v-if="item.show">
 						
-						<div class="item" @click="show = !show" v-if="item.name == firstnav?false:true">
+						<div class="item" :style="{backgroundColor:tabsactive == item.name || parentidlist.indexOf(item.name)!=-1?'#73668f':''}" @click="show = !show" v-if="item.name == firstnav?false:true">
 							<div class="itemdiv" style="padding-left: 20px;margin-right: 20px;" :style="{marginLeft:index*20+'px',color:tabsactive == item.name || parentidlist.indexOf(item.name)!=-1?'yellow':''}">
 								<div class="itemjiantou" :style="{transform:show?'rotate(-90deg)':''}">
 									<i class="fa fa-caret-left" style="color: white;"></i>
@@ -56,7 +56,7 @@
 		</div>
 		<div v-else>
 			
-			<div v-if="item.show&&item.root!=-1" class="item" @click.stop="toadditem(item)">
+			<div v-if="item.show&&item.root!=-1" class="item" :style="{backgroundColor:tabsactive == item.name?'#57477a':''}" @click.stop="toadditem(item)">
 				<div class="itemdiv" style="padding-left: 20px;" :style="{marginLeft:index*20+'px',color:tabsactive == item.name?'yellow':''}">
 					<div class="itemimg">
 						<img v-if="item.navicon.type == 'img'" :src="item.navicon.icon" />
@@ -145,10 +145,11 @@
 <style scoped="scoped">
 	.item {
 		position: relative;
-		padding: 14px 15px;
+		padding: 5px 15px;
 		min-height: 21px;
 		word-break: break-all;
 		color: white;
+		font-size: 12px;
 		cursor: pointer;
 	}
 	.itemimg {
@@ -162,12 +163,16 @@
 	.itemimg i {
 		vertical-align: top;
 	}
+	.itemimg i {
+		font-size: 14px;
+	}
 	.itemimg img {
 		width: 100%;
 		height: 100%;
 	}
 	.itemdiv {
 		position: relative;
+		line-height: 22px;
 	}
 	.itemjiantou {
 		position: absolute;

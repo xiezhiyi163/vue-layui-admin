@@ -2,17 +2,20 @@
 	<div class="home" :style="{visibility: ifhidden}">
 		<div class="top" style="min-width: 355px;">
 			<div class="topin" :style="{marginLeft:showleft?'':(subshowleft?'':'0px'),boxShadow:(!showleft?'0 0 10px 0 #333':'')}">
-				<div class="menuicon" v-show="showleft" @click="ifshownavs()">&equiv;</div>
+				<div class="menuicon" v-show="showleft||(!showleft&&subshowleft)" @click="ifshownavs()">&equiv;</div>
 				<div class="menuicon2" v-show="showleft">&equiv;</div>
 				<div class="menuicon2" v-show="subshowleft">&equiv;</div>
-				<div class="title" :style="{marginLeft:showleft?'':'20px'}">
-					<span class="titlein" @click="$router.replace({name:'index'})">组件管理系统 </span>
-					<a>>>> </a>
-					<div style="display: inline;" v-for="(v,i) in titlelist">
-						<div style="display: inline;" v-if="titlelist.length == 1">{{v}}</div>
-						<div style="display: inline;" v-else-if="titlelist.length != 1&&i!=titlelist.length-1">{{v}} / </div>
-						<div style="display: inline;" v-else-if="i==titlelist.length-1">{{v}}</div>
+				<div class="title" :style="{marginLeft:(showleft||(!showleft&&subshowleft))?'':'20px'}">
+					<span :style="{display:showleft?'none':(subshowleft?'none':'')}" class="titlein" @click="$router.replace({name:'index'})">组件管理系统 </span>
+					<a :style="{display:showleft?'none':(subshowleft?'none':'')}">>>> </a>
+					<div style="display: inline;" v-if="titlelist.length!=0">
+						<div style="display: inline;" v-for="(v,i) in titlelist">
+							<div style="display: inline;" v-if="titlelist.length == 1">{{v}}</div>
+							<div style="display: inline;" v-else-if="titlelist.length != 1&&i!=titlelist.length-1">{{v}} / </div>
+							<div style="display: inline;" v-else-if="i==titlelist.length-1">{{v}}</div>
+						</div>
 					</div>
+					<div style="display: inline;" v-else>{{activetitle}}</div>
 				</div>
 				<div class="rightbtns">
 					<!-- 顶部的附加按钮 -->
@@ -32,10 +35,15 @@
 			</div>
 		</div>
 		<div class="left" :style="{left:ifshownav?'0px':'',display:showleft?'':(subshowleft?'':'none')}">
-			<div class="lefttop"></div>
-			
-			<leftnav v-for="(v,i) in navlist" :item="v" :index="0" :tabsactive="activeid" :parentidlist="idlist" firstnav="Home" @additems="additem"></leftnav>
-			
+			<div class="leftlogo">
+				组件管理系统
+			</div>
+			<div class="leftin">
+				<div class="lefttop"></div>
+				
+				<leftnav v-for="(v,i) in navlist" :item="v" :index="0" :tabsactive="activeid" :parentidlist="idlist" firstnav="Home" @additems="additem"></leftnav>
+				
+			</div>
 		</div>
 		<div class="leftshade" @click="ifshownavs()" v-if="ifshownav"></div>
 		<div class="tabs" style="min-width: 355px;">
@@ -47,7 +55,7 @@
 			</div>
 		</div>
 		<!-- 视图区 -->
-		<div class="view" style="min-width: 355px;" :style="{marginLeft:showleft?'':(subshowleft?'':'0px'),marginTop:showleft?'':'60px'}">
+		<div class="view" style="min-width: 355px;" :style="{marginLeft:showleft?'':(subshowleft?'':'0px'),marginTop:showleft?'':'40px'}">
 			
 			<div v-if="showleft">
 				<router-view v-slot="{ Component }">
@@ -189,6 +197,13 @@
 			},
 			
 			
+			//架构尺寸自适应
+			systemdomset:function(){
+				var winwidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+				if(winwidth>760){
+					this.ifshownav = 0
+				}
+			},
 			//idlist处理成对象数组
 			settitlelist:function(){
 				this.titlelist = []
@@ -197,6 +212,13 @@
 					list.map(item=>{arr.push({title:item.title,id:item.id});if(item.children){fn(item.children)}})
 				}
 				fn(_rec_routes)
+				if(typeof this.idlist == "object"){
+					if(!this.idlist[0]){
+						this.idlist = window.sessionStorage.getItem('idlist').split(',')
+					}
+				}else{
+					this.idlist = window.sessionStorage.getItem('idlist').split(',')
+				}
 				for(var i in this.idlist){
 					for(var k=0;k<arr.length;k++){
 						if(this.idlist[i] == arr[k].id){
@@ -221,6 +243,7 @@
 				//获取当前和父级相同属性，写到一个数组用于子层级的父级匹配
 				
 				this.idlist = getthisandparent()(_rec_routes,obj.name,'name')
+				window.sessionStorage.setItem('idlist',this.idlist)
 				
 				//idlist处理成对象数组
 				this.settitlelist()
@@ -236,6 +259,7 @@
 				if (hadtab == 1) {
 					this.activeid = id
 					this.activetitle = title
+					window.sessionStorage.setItem('navtitle',title)
 					//跳转
 					if(ifgetquery){
 						this.$router.replace({'name':obj.name,query,})
@@ -250,6 +274,7 @@
 				})
 				this.activeid = obj.name
 				this.activetitle = obj.title
+				window.sessionStorage.setItem('navtitle',this.activetitle)
 				//跳转
 				if(ifgetquery){
 					this.$router.replace({'name':obj.name,query,})
@@ -278,14 +303,18 @@
 					if (this.tablist[data.ind]) {
 						this.activeid = this.tablist[data.ind].id
 						this.activetitle = this.tablist[data.ind].name
+						window.sessionStorage.setItem('navtitle',this.activetitle)
 						this.idlist = getthisandparent()(_rec_routes,this.tablist[data.ind].name,'name')
+						window.sessionStorage.setItem('idlist',this.idlist)
 						
 						//idlist处理成对象数组
 						this.settitlelist()
 					} else {
 						this.activeid = this.tablist[data.ind - 1].id
 						this.activetitle = this.tablist[data.ind - 1].name
+						window.sessionStorage.setItem('navtitle',this.activetitle)
 						this.idlist = getthisandparent()(_rec_routes,this.tablist[data.ind - 1].name,'name')
+						window.sessionStorage.setItem('idlist',this.idlist)
 						
 						//idlist处理成对象数组
 						this.settitlelist()
@@ -310,10 +339,12 @@
 					}
 					this.activeid = this.tablist[data.ind].id
 					this.activetitle = data.title
+					window.sessionStorage.setItem('navtitle',data.title)
 					
 					//获取当前和父级相同属性，写到一个数组用于子层级的父级匹配
 					
 					this.idlist = getthisandparent()(_rec_routes,this.tablist[data.ind].id,'name')
+					window.sessionStorage.setItem('idlist',this.idlist)
 					
 					//idlist处理成对象数组
 					this.settitlelist()
@@ -368,10 +399,17 @@
 				fn(_rec_routes)
 				var thispath = this.$route.path.split('/')[this.$route.path.split('/').length-1]
 				if(arr.find(item=>item.name == thispath)){
+					//是导航路由就进这
 					var temp = arr.find(item=>item.name == thispath)
 					this.activeid = temp.id
 					this.activetitle = temp.title
 					this.toadditem(arr.find(item=>item.name == thispath),null,1)
+				}else{
+					//
+					var temp = window.sessionStorage.getItem('idlist').split(',')
+					this.activeid = temp[temp.length - 1]
+					this.activetitle = window.sessionStorage.getItem('navtitle')
+					this.settitlelist()
 				}
 				//------------------------------------
 				if(arr.find(item=>item.name == thispath)){
@@ -520,6 +558,10 @@
 			}
 		},
 		mounted() {
+			this.systemdomset()
+			window.addEventListener('resize',() =>{
+				this.systemdomset()
+			})
 			layui.use(['layer'],()=>{
 				this.$layui = layui
 				this.ifhidden = 'visible'
@@ -594,22 +636,22 @@
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 60px;
+		height: 40px;
 		background-color: #6194df;
 		z-index: 8;
 	}
 	
 	.topin {
 		margin-left: 210px;
-		height: 60px;
+		height: 40px;
 	}
 	
 	.menuicon,
 	.menuicon2 {
 		display: none;
 		padding: 0 15px;
-		line-height: 60px;
-		font-size: 40px;
+		line-height: 40px;
+		font-size: 30px;
 		color: white;
 		cursor: pointer;
 	}
@@ -618,8 +660,8 @@
 		display: inline-block;
 		vertical-align: top;
 		margin-left: 20px;
-		height: 60px;
-		line-height: 60px;
+		height: 40px;
+		line-height: 40px;
 		font-weight: 800;
 		color: white;
 	}
@@ -629,7 +671,7 @@
 		vertical-align: middle;
 		top: -2px;
 		cursor: pointer;
-		font-size: 22px;
+		font-size: 16px;
 	}
 	
 	.rightbtns {
@@ -643,10 +685,10 @@
 		position: relative;
 		display: inline-block;
 		vertical-align: top;
-		margin-top: 12.5px;
-		margin-right: 12.5px;
-		width: 35px;
-		height: 35px;
+		margin-top: 9px;
+		margin-right: 9px;
+		width: 22px;
+		height: 22px;
 		background-color: #fff;
 		border-radius: 50%;
 	}
@@ -668,7 +710,7 @@
 		display: none;
 		position: absolute;
 		padding: 10px 0 0 0;
-		top: 30px;
+		top: 20px;
 		right: 0;
 		width: 210px;
 	}
@@ -704,24 +746,41 @@
 		box-shadow: 0 0 10px 0 #333;
 	}
 	
-	.left::-webkit-scrollbar {
+	.leftlogo {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 40px;
+		line-height: 40px;
+		text-align: center;
+		white-space: nowrap;
+		background-color: #452668;
+		color: white;
+	}
+	
+	.leftin {
+		height: 100%;
+	}
+	
+	.leftin::-webkit-scrollbar {
 	  /*滚动条整体样式*/
 	  width : 7px;  /*高宽分别对应横竖滚动条的尺寸*/
 	  height: 1px;
 	}
-	.left::-webkit-scrollbar-thumb {
+	.leftin::-webkit-scrollbar-thumb {
 	  /*滚动条里面小方块*/
 	  border-radius: 10px;
 	  background   : #a299c5;
 	}
-	.left::-webkit-scrollbar-track {
+	.leftin::-webkit-scrollbar-track {
 	  /*滚动条里面轨道*/
 	  border-radius: 10px;
 	  background   : #857da2;
 	}
 	
 	.lefttop {
-		padding-top: 10px;
+		padding-top: 40px;
 	}
 	
 	.leftshade {
@@ -737,7 +796,7 @@
 	
 	.tabs {
 		position: fixed;
-		top: 60px;
+		top: 40px;
 		left: 0px;
 		width: 100%;
 		background-color: #687cac;
@@ -750,7 +809,7 @@
 	}
 
 	.view {
-		margin-top: 100px;
+		margin-top: 80px;
 		margin-left: 210px;
 	}
 	

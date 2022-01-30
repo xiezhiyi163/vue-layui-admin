@@ -166,8 +166,8 @@
 	.tabs_wrap {
 		position: relative;
 		margin-top: -3px;
-		height: 43px;
-		border-bottom: 1px solid #687cac;
+		height: 33px;
+		/* border-bottom: 1px solid #687cac; */
 		overflow: hidden;
 	}
 	.tabs_leftbutton,
@@ -175,8 +175,8 @@
 		position: absolute;
 		top: 3px;
 		width: 20px;
-		height: 40px;
-		line-height: 40px;
+		height: 30px;
+		line-height: 30px;
 		text-align: center;
 		cursor: pointer;
 		color: white;
@@ -202,12 +202,12 @@
 	.tabs_item {
 		position: relative;
 		display: inline-block;
-		height: 40px;
+		height: 30px;
 		font-size: 16px;
 	}
 	.tabs_close {
 		position: absolute;
-		top: 10px;
+		top: 5px;
 		right: 5px;
 		width: 20px;
 		height: 20px;
@@ -218,13 +218,14 @@
 	}
 	.tabs_info {
 		position: relative;
+		font-size: 12px;
 	}
 	.tabs_itemin {
 		position: relative;
 		display: inline-block;
 		padding: 0 30px;
-		height: 40px;
-		line-height: 40px;
+		height: 30px;
+		line-height: 30px;
 		vertical-align: bottom;
 		border: 1px solid #687cac;
 		border-bottom: 0;
@@ -239,15 +240,16 @@
 		left: -10px;
 	}
 	.tabs_item .active {
-		height: 40px;
-		line-height: 40px;
+		height: 30px;
+		line-height: 30px;
 		/* border-radius: 10px 10px 0 0; */
 		background-color: #f5f5f5;
+		border: 1px solid #f5f5f5;
 		color: #0000FF;
 		transition: 300ms;
 	}
 	.tabs_itemright {
 		display: inline-block;
-		height: 40px;
+		height: 30px;
 	}
 </style>

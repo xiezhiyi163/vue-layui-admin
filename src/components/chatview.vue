@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="chatbox" :style="{height:winheight - 101 + 'px',width:winw - 40 +'px',right:ifshowchat == 1?'':'-100%'}">
+		<div class="chatbox" :style="{height:winheight - 71 + 'px',width:winw - 40 +'px',right:ifshowchat == 1?'':'-100%'}">
 			<div class="iframe">
 				<iframe :src="link" style="width:100%;height: 100%;" frameborder="0"></iframe>
 			</div>
@@ -43,7 +43,7 @@
 <style scoped="scoped">
 	.chatbox {
 		position: fixed;
-		top: 100px;
+		top: 70px;
 		right: 0;
 		max-width: 500px;
 		z-index: 1;
