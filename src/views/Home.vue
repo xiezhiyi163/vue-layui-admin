@@ -20,7 +20,6 @@
 				<div class="rightbtns">
 					<!-- 顶部的附加按钮 -->
 					<searchbar @additems="additem" v-if="showleft?true:(subshowleft?true:false)"></searchbar>
-					<div class="switchbtn" @click="top_max_zindex_set">顶部铺满<i class="fa" :class="top_max_zindex?'fa-toggle-on':'fa-toggle-off'"></i></div>
 					<div class="head">
 						<div class="headimg"></div>
 						<div class="headbtnwrap">
@@ -108,7 +107,7 @@
 		},
 		data() {
 			return {
-				top_max_zindex:window.localStorage.getItem('iftopmax') == '1'?1:0,//1的时候，顶部位于最顶层
+				top_max_zindex:0,//1的时候，顶部位于最顶层
 				minsize:0,//屏幕最小尺寸的标识，1为小于最小尺寸
 				ifhidden:'hidden',
 				$layui:'',
@@ -209,11 +208,6 @@
 				}else{
 					this.minsize = 1
 				}
-			},
-			//顶部设置是否铺满
-			top_max_zindex_set:function(){
-				this.top_max_zindex == 1?this.top_max_zindex = 0:this.top_max_zindex = 1
-				window.localStorage.setItem('iftopmax',this.top_max_zindex)
 			},
 			
 			
@@ -697,16 +691,6 @@
 		top: 0;
 		right: 0;
 		height: 100%;
-	}
-	
-	.switchbtn {
-		display: inline;
-		color: white;
-		cursor: pointer;
-	}
-	
-	.switchbtn i {
-		margin: 0 20px 0 10px;
 	}
 	
 	.head {
