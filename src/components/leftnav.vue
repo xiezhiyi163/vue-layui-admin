@@ -145,12 +145,13 @@
 <style scoped="scoped">
 	.item {
 		position: relative;
-		padding: 5px 15px;
+		padding: 4px 15px;
 		min-height: 21px;
 		word-break: break-all;
 		color: white;
 		font-size: 12px;
 		cursor: pointer;
+		/* background-color: #897da1 !important; */
 	}
 	.itemimg {
 		position: absolute;
