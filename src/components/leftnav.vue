@@ -1,58 +1,41 @@
 <template>
 	<div>
-		<div v-if="item.children">
-			<div v-if="item.children.length == 1">
-				<div v-if="item.show">
-					
-					<div class="item" :style="{backgroundColor:tabsactive == item.name?'#57477a':''}" v-if="item.children[0].root != -1" @click.stop="toadditem(item.children[0])">
-						<div class="itemdiv" style="padding-left: 20px;" :style="{marginLeft:index*20+'px',color:tabsactive == item.children[0].name?'yellow':''}">
-							<div class="itemimg">
-								<img v-if="item.navicon.type == 'img'" :src="item.navicon.icon" />
-								<i v-if="item.navicon.type == 'font'" :class="item.navicon.icon" aria-hidden="true"></i>
-							</div>
-							{{item.children[0].title}}
-						</div>
+			
+		<div class="item" :style="{backgroundColor:tabsactive == item.name?'#57477a':''}" v-if="item.children&&item.children.length == 1&&item.show && item.children[0].root != -1" @click.stop="toadditem(item.children[0])">
+			<div class="itemdiv" style="padding-left: 20px;" :style="{marginLeft:index*20+'px',color:tabsactive == item.children[0].name?'yellow':''}">
+				<div class="itemimg">
+					<img v-if="item.navicon.type == 'img'" :src="item.navicon.icon" />
+					<i v-if="item.navicon.type == 'font'" :class="item.navicon.icon" aria-hidden="true"></i>
+				</div>
+				{{item.children[0].title}}
+			</div>
+		</div>
+
+		<div v-else-if="item.children&&item.children.length != 1&&s">
+			
+			<div class="item" :style="{backgroundColor:tabsactive == item.name || parentidlist.indexOf(item.name)!=-1?'#73668f':''}" @click="show = !show" v-if="(item.name == firstnav?false:true)&&item.show">
+				<div class="itemdiv" style="padding-left: 20px;margin-right: 20px;" :style="{marginLeft:index*20+'px',color:tabsactive == item.name || parentidlist.indexOf(item.name)!=-1?'yellow':''}">
+					<div class="itemjiantou" :style="{transform:show?'rotate(-90deg)':''}">
+						<i class="fa fa-caret-left" style="color: white;"></i>
 					</div>
-					
+					<div class="itemimg">
+						<img v-if="item.navicon.type == 'img'" :src="item.navicon.icon" />
+						<i v-if="item.navicon.type == 'font'" :class="item.navicon.icon" aria-hidden="true"></i>
+					</div>
+					{{item.title}}
 				</div>
 			</div>
-			<div v-else>
-				<div v-if="s">
-					<div v-if="item.show">
-						
-						<div class="item" :style="{backgroundColor:tabsactive == item.name || parentidlist.indexOf(item.name)!=-1?'#73668f':''}" @click="show = !show" v-if="item.name == firstnav?false:true">
-							<div class="itemdiv" style="padding-left: 20px;margin-right: 20px;" :style="{marginLeft:index*20+'px',color:tabsactive == item.name || parentidlist.indexOf(item.name)!=-1?'yellow':''}">
-								<div class="itemjiantou" :style="{transform:show?'rotate(-90deg)':''}">
-									<i class="fa fa-caret-left" style="color: white;"></i>
-								</div>
-								<div class="itemimg">
-									<img v-if="item.navicon.type == 'img'" :src="item.navicon.icon" />
-									<i v-if="item.navicon.type == 'font'" :class="item.navicon.icon" aria-hidden="true"></i>
-								</div>
-								{{item.title}}
-							</div>
-						</div>
-						
-					</div>
-					<div v-show="item.children">
-						<div v-if="item.name == firstnav">
-							<div v-for="(v,i) in item.children">
-								<leftnavc :item="v" :index="Number(index)+1" :tabsactive='tabsactive' :parentidlist="parentidlist" :firstnav="firstnav" @additems="toadditem"></leftnavc>
-							</div>
-						</div>
-						<div v-else-if="show&&item.name != firstnav">
-							<div v-for="(v,i) in item.children">
-								<leftnavc :item="v" :index="Number(index)+1" :tabsactive='tabsactive' :parentidlist="parentidlist" :firstnav="firstnav" @additems="toadditem"></leftnavc>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div v-else style="margin-left: -20px;">
-					<div v-for="(v,i) in item.children">
-						<leftnavc :item="v" :index="Number(index)+1" :tabsactive='tabsactive' :parentidlist="parentidlist" :firstnav="firstnav" @additems="toadditem"></leftnavc>
-					</div>
-				</div>
+			
+			<div v-if="item.name == firstnav&&item.children">
+				<leftnavc v-for="(v,i) in item.children" :item="v" :index="Number(index)+1" :tabsactive='tabsactive' :parentidlist="parentidlist" :firstnav="firstnav" @additems="toadditem"></leftnavc>
 			</div>
+			<div v-else-if="show&&item.name != firstnav&&item.children">
+				<leftnavc v-for="(v,i) in item.children" :item="v" :index="Number(index)+1" :tabsactive='tabsactive' :parentidlist="parentidlist" :firstnav="firstnav" @additems="toadditem"></leftnavc>
+			</div>
+				
+		</div>
+		<div v-else-if="item.children&&item.children.length != 1&&!s" style="margin-left: -20px;">
+			<leftnavc v-for="(v,i) in item.children" :item="v" :index="Number(index)+1" :tabsactive='tabsactive' :parentidlist="parentidlist" :firstnav="firstnav" @additems="toadditem"></leftnavc>
 		</div>
 		<div v-else>
 			
@@ -98,7 +81,7 @@
 		},
 		data(){
 			return {
-				s:0,
+				s:0,//代表是否存在下级导航
 				show:0,
 			}
 		},

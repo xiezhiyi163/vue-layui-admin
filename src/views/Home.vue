@@ -26,6 +26,9 @@
 							<div class="headbtnwrapin">
 								<div class="headbtnitem">当前位置：{{local}}</div>
 								<div class="headbtnitem">倒计时：<br/>{{timedown}}</div>
+								<div class="headbtnitem">随手记：<br/>
+									<swipermemo/>
+								</div>
 								<div class="headbtnitem" @click="opendoc()">admindoc</div>
 								<div class="headbtnitem" @click="loginout()">退出</div>
 							</div>
@@ -71,6 +74,8 @@
 			<div class="footer">@power - vue layui</div>
 			<chatview></chatview>
 		</div>
+		<!-- righttips -->
+		<tips/>
 	</div>
 </template>
 
@@ -87,26 +92,26 @@
 	} from '../assets/js/common.js'
 	import searchbar from '../components/searchbar.vue'
 	import chatview from '../components/chatview.vue'
-	
-	
+	import swipermemo from '../components/swipermemo.vue'
+	import tips from '../components/tipshow.vue'
+	//
 	import leftnav from '../components/leftnav.vue'
-	
-	
 	import tabs from '../components/tabs.vue'
 	export default {
 		name: "Home",
 		components: {
 			searchbar,
 			chatview,
-			
+			swipermemo,
+			tips,
+			//
 			leftnav,
-			
-			
 			//选项卡相关
 			tabs
 		},
 		data() {
 			return {
+				memo:'',//记录笔记的地方
 				top_max_zindex:0,//1的时候，顶部位于最顶层
 				minsize:0,//屏幕最小尺寸的标识，1为小于最小尺寸
 				ifhidden:'hidden',
@@ -505,19 +510,20 @@
 						break;
 				}
 				// 这里后面可以写你的后续操作了，下面的经纬度是天安门的具体位置
+				this.local = '无法获取'
 				// 经度
-				var longitude = 116.404;
-				// 纬度
-				var latitude = 39.915;
-				// 根据经纬度获取地理位置，不太准确，获取城市区域还是可以的
-				// var map = new BMapGL.Map("allmap");
-				var point = new BMapGL.Point(longitude, latitude);
-				var gc = new BMapGL.Geocoder();
-				gc.getLocation(point, (rs) => {
-					var addComp = rs.addressComponents;
-					// this.local = addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber;
-					this.local = addComp.city;
-				});
+				// var longitude = 116.404;
+				// // 纬度
+				// var latitude = 39.915;
+				// // 根据经纬度获取地理位置，不太准确，获取城市区域还是可以的
+				// // var map = new BMapGL.Map("allmap");
+				// var point = new BMapGL.Point(longitude, latitude);
+				// var gc = new BMapGL.Geocoder();
+				// gc.getLocation(point, (rs) => {
+				// 	var addComp = rs.addressComponents;
+				// 	// this.local = addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber;
+				// 	this.local = addComp.city;
+				// });
 				// 这里后面可以写你的后续操作了
 			},
 			//倒计时
@@ -557,6 +563,10 @@
 				}
 				this.timedownfn = new Timedown('10000-12-31')
 				this.timedownfn.countdown()
+			},
+			// memo输出到本地
+			settolocal:function() {
+				localStorage.setItem('memo',this.memo)
 			}
 		},
 		watch:{
@@ -567,6 +577,7 @@
 			}
 		},
 		mounted() {
+			var $vue = this;
 			this.systemdomset()
 			window.addEventListener('resize',() =>{
 				this.systemdomset()
@@ -578,7 +589,7 @@
 				this.navlist = _rec_routes
 				//重新配置root
 				this.routereset(
-					['index','recurrence','coms','common-coms','timedown','swipertest','table_drag_test','jsmindtest','mxgraphtest'],//后台返回的该用户选中的页面
+					['index','recurrence','coms','common-coms','timedown','swipertest','table_drag_test','jsmindtest','mxgraphtest','codemirror'],//后台返回的该用户选中的页面
 					this.routeresetcb
 				)
 			})
@@ -715,11 +726,11 @@
 	}
 	
 	.head:hover .headbtnwrap {
-		display: block;
+		visibility: visible;
 	}
 	
 	.headbtnwrap {
-		display: none;
+		visibility: hidden;
 		position: absolute;
 		padding: 10px 0 0 0;
 		top: 20px;

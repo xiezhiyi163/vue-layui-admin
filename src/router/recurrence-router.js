@@ -116,6 +116,18 @@ var _rec_routes = [
 			},
 		]
 	},
+	// {
+	// 	path: "codemirror",
+	// 	name: "codemirror",
+	// 	id: 'codemirror', //和name一样，设置权限要用到
+	// 	title: '代码测试',
+	// 	root: [],
+	// 	navicon:{
+	// 		type:'img',
+	// 		icon:require('../assets/about.png')
+	// 	},
+	// 	component: () => import( /* webpackChunkName: "about" */ "../views/codemirror/index.vue"),
+	// }
 ]
 
 export {
