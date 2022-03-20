@@ -8,6 +8,11 @@
 				</div>
 			</div>
 			<!-- == -->
+			<div class="smalltitle">视频截图</div>
+			<div class="pad">
+				<videopiccut />		
+			</div>
+			<!-- == -->
 			<div class="smalltitle">图标在中间的内容展示模板，多用于天气展示</div>
 			<div class="pad">
 				<iconincenter />		
@@ -44,6 +49,7 @@
 
 <script>
 // @ is an alias to /src
+import videopiccut from "@/components/subcoms/videopiccut.vue";
 import detail from "@/components/subcoms/detail.vue";
 import detailimgtop from "@/components/subcoms/detailimg-top.vue";
 import iconincenter from "@/components/subcoms/icon_in_center.vue";
@@ -53,6 +59,7 @@ import signcss from "@/components/subcoms/sign-css.vue";
 export default {
   name: "Home",
   components: {
+	videopiccut,
     detail,
 	detailimgtop,
 	iconincenter,
