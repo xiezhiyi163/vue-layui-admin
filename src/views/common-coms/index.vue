@@ -8,6 +8,21 @@
 				</div>
 			</div>
 			<!-- == -->
+			<div class="smalltitle">搜索组件（搜索专页使用）</div>
+			<div class="pad">
+				<!-- 
+					@mode:'local',本地数据，'line',线上获取
+					@requestlist:请求到的数据(line，必选)
+					@requestSearchValue:回调 -> 返回关键词获取接口数组写入到requestlist属性(line，必选)
+					@searchlist:本地数据数组(local，必选)
+					@keys:当数组的每一个为对象时，该属性必须(local，必选)
+					@subkey:单个数组对象的子集属性(local，可选)
+					//
+					@search:回调 -> 获得返回的关键词
+				 -->
+				<searchwithlist mode="line" :requestlist="linelist" @requestSearchValue="" :searchlist="locallist" keys="title" subkey="children" @search=""/>		
+			</div>
+			<!-- == -->
 			<div class="smalltitle">视频截图</div>
 			<div class="pad">
 				<videopiccut />		
@@ -48,6 +63,7 @@
 </template>
 
 <script>
+import {_rec_routes} from '../../router/recurrence-router.js'
 // @ is an alias to /src
 import videopiccut from "@/components/subcoms/videopiccut.vue";
 import detail from "@/components/subcoms/detail.vue";
@@ -55,6 +71,7 @@ import detailimgtop from "@/components/subcoms/detailimg-top.vue";
 import iconincenter from "@/components/subcoms/icon_in_center.vue";
 import sign from "@/components/subcoms/sign.vue";
 import signcss from "@/components/subcoms/sign-css.vue";
+import searchwithlist from "@/components/subcoms/searchboxWithList.vue";
 
 export default {
   name: "Home",
@@ -64,8 +81,15 @@ export default {
 	detailimgtop,
 	iconincenter,
 	sign,
-	signcss
+	signcss,
+	searchwithlist
   },
+  data() {
+	  return {
+		  linelist:['line数据演示1','line数据演示2','line数据演示3'],
+		  locallist:_rec_routes//模拟数据
+	  }
+  }
 };
 </script>
 
