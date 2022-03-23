@@ -18,9 +18,16 @@
 					@keys:当数组的每一个为对象时，该属性必须(local，必选)
 					@subkey:单个数组对象的子集属性(local，可选)
 					//
+					@changesearchtype:搜索类型切换
+					@search:回调 -> 获得返回的关键词
+					//
+					拓展：当有图片上传的时候，图片信息存到组件里面，search回调接收到图片信息，就连带关键词拿数据，否则就是普通的关键词拿数据
+				 -->
+				<searchwithlist v-if="searchtype==0" @changesearchtype="changesearch" mode="line" :requestlist="linelist" @requestSearchValue="" :searchlist="locallist" keys="title" subkey="children" @search=""/>
+				<!-- 
 					@search:回调 -> 获得返回的关键词
 				 -->
-				<searchwithlist mode="line" :requestlist="linelist" @requestSearchValue="" :searchlist="locallist" keys="title" subkey="children" @search=""/>		
+				<searchwithlistPic v-else @changesearchtype="changesearch" @search=""></searchwithlistPic>	
 			</div>
 			<!-- == -->
 			<div class="smalltitle">视频截图</div>
@@ -72,6 +79,7 @@ import iconincenter from "@/components/subcoms/icon_in_center.vue";
 import sign from "@/components/subcoms/sign.vue";
 import signcss from "@/components/subcoms/sign-css.vue";
 import searchwithlist from "@/components/subcoms/searchboxWithList.vue";
+import searchwithlistPic from "@/components/subcoms/searchboxWithList-pic.vue";
 
 export default {
   name: "Home",
@@ -82,12 +90,19 @@ export default {
 	iconincenter,
 	sign,
 	signcss,
-	searchwithlist
+	searchwithlist,
+	searchwithlistPic
   },
   data() {
 	  return {
+		  searchtype:0,//search类型
 		  linelist:['line数据演示1','line数据演示2','line数据演示3'],
 		  locallist:_rec_routes//模拟数据
+	  }
+  },
+  methods:{
+	  changesearch:function(type) {
+		  this.searchtype = type
 	  }
   }
 };

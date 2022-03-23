@@ -13,6 +13,7 @@
             autocomplete="off"
             @input="testifobj"
           />
+          <div class="topic" @click="changesearch">搜图</div>
         </div>
         <!-- 按钮区域 -->
         <div class="searchwrap_btn" @click="tosearch"><i></i>搜搜一下</div>
@@ -93,6 +94,9 @@ export default {
     };
   },
   methods: {
+    changesearch:function(){
+      this.$emit('changesearchtype',1)
+    },
     testifobj:function() {
       this.newsearchlist = []
       //线上拿数据，直接赋值
@@ -198,7 +202,7 @@ export default {
 .searchwrap_base {
   position: relative;
   margin: 0 0px 3px 3px;
-  padding: 0 13px 0 10px;
+  padding: 0 73px 0 10px;
   height: 40px;
   background-color: white;
   border-radius: 6px 0 0 6px;
@@ -208,6 +212,17 @@ export default {
   padding: 12px 0;
   width: 100%;
   font-size: 14px;
+}
+.topic {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 70px;
+  height: 100%;
+  line-height: 40px;
+  text-align: center;
+  color: #aaa;
+  cursor: pointer;
 }
 .searchwrap_btn {
   position: absolute;
