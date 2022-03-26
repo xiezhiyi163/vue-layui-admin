@@ -583,7 +583,6 @@
 		},
 		mounted() {
 			var $vue = this;
-			this.$root.home = this
 			//注册layui
 			layui.use(['layer'],()=>{
 				//#dom-----------------
