@@ -1,5 +1,5 @@
 <template>
-	<div class="main">
+	<div :id="'layui-'+$root.store.bgcolor" class="main">
 		<div style="padding: 20px;">仅作基础演示：</div>
 		<div style="background-color: white;">
 			<div id="jsmindtest"></div>

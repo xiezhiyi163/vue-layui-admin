@@ -31,6 +31,13 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ### views，存放页面的地方
 ### ---其中home.vue是架构文件
 ```
+
+### 技术点突破
+```
+### 通过操作app.vue的全局api，this.$root来实现app.vue里面的数据，甚至是app.vue引入组件的实例的数据的读取和修改
+### 来实现通过app.vue中间层去直接获取或者修改数据来每一个页面实时同步使用
+```
+
 ### 项目描述（重点权限请求处理）
 ```
 ### home.vue 里面的mounted()里面的那个routereset方法就是渲染路由权限的方法，

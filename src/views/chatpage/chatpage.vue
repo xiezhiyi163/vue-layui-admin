@@ -1,5 +1,5 @@
 <template>
-	<div style="min-width: 355px;">
+	<div :id="'layui-'+$root.store.bgcolor" style="min-width: 355px;">
 		<!-- 分类 -->
 		<div class="type">
 			<div class="typeitem" :class="{typeitemactive:typechange == 2}" @click="typechange = 2">

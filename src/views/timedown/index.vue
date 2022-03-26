@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div :id="'layui-'+$root.store.bgcolor">
 		<div style="padding: 20px;">增量倒计时演示(不是商品列表的倒计时，使用interval，不要timeout一个个去增，会有误差)：</div>
 		<div class="main">
 			<div class="wrap">

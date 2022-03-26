@@ -1,5 +1,5 @@
 <template>
-	<div class="home" :style="{visibility: ifhidden}">
+	<div class="home" :style="{visibility: ifhidden,height:ifhidden == 'visible'?'auto':'0',overflow:ifhidden == 'visible'?'visible':'hidden'}">
 		<div class="top" style="min-width: 355px;" :style="{zIndex:top_max_zindex?20:8}">
 			<div class="topin" :style="{marginLeft:top_max_zindex?'0px':(showleft?'':(subshowleft?'':'0px')),boxShadow:top_max_zindex?'0 0 10px 0 #7e5f9d':(!showleft?'0 0 10px 0 #333':'')}">
 				<div class="menuicon" v-show="showleft||(!showleft&&subshowleft)" @click="ifshownavs()">&equiv;</div>
@@ -58,7 +58,7 @@
 			</div>
 		</div>
 		<!-- 视图区 -->
-		<div class="view" style="min-width: 355px;" :style="{marginLeft:showleft?'':(subshowleft?'':'0px'),marginTop:showleft?'':'40px'}">
+		<div v-if="ifhidden == 'visible'" class="view" style="min-width: 355px" :style="{marginLeft:showleft?'':(subshowleft?'':'0px'),marginTop:showleft?'':'40px'}">
 			
 			<div v-if="showleft">
 				<router-view v-slot="{ Component }">
@@ -80,6 +80,7 @@
 </template>
 
 <script>
+	//this.changeGlobalColor(null,'7db0ef')//全局修改颜色，第一个参数是字体颜色，第二个参数是背景颜色
 	// @ is an alias to /src
 	import {_routes} from '../router/routerMap.js'
 	import {_rec_routes} from '../router/recurrence-router.js'
@@ -141,7 +142,7 @@
 					}
 				],
 				activeid: 'index',
-				activetitle:'首页'
+				activetitle:'首页',
 			}
 		},
 		methods: {
@@ -567,6 +568,10 @@
 			// memo输出到本地
 			settolocal:function() {
 				localStorage.setItem('memo',this.memo)
+			},
+			// 修改全局颜色
+			changeGlobalColor:function(color,bg) {
+				this.$root.store.bgcolor = bg
 			}
 		},
 		watch:{
@@ -578,11 +583,16 @@
 		},
 		mounted() {
 			var $vue = this;
-			this.systemdomset()
-			window.addEventListener('resize',() =>{
-				this.systemdomset()
-			})
+			this.$root.home = this
+			//注册layui
 			layui.use(['layer'],()=>{
+				//#dom-----------------
+				this.systemdomset()
+				window.addEventListener('resize',() =>{
+					this.systemdomset()
+				})
+				this.changeGlobalColor(null,'7db0ef')
+				//#data-----------------
 				this.$layui = layui
 				this.ifhidden = 'visible'
 				leftclick(0)//传0进去
@@ -613,14 +623,9 @@
 		height: 100%;
 		box-sizing: border-box;
 	}
-	.layui-btn,
-	.layui-form-checked[lay-skin="primary"] i {
-		background-color: #7db0ef;
-	}
 	.layui-layer-shade {
 		opacity: .8 !important;
 	}
-	
 	.fade-transform-enter-active{
 		position: relative;
 		animation: scale 500ms;
@@ -652,6 +657,7 @@
 </style>
 <style scoped="scoped">
 	.home {
+		position: relative;
 		user-select:none;
 	}
 	.top {

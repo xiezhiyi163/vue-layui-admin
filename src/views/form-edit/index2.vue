@@ -1,5 +1,5 @@
 <template>
-	<div class="main">
+	<div :id="'layui-'+$root.store.bgcolor" class="main">
 		<h3 style="padding: 20px;">新建项目</h3>
 		<div class="form-tables">
 			<div class="formwrap">

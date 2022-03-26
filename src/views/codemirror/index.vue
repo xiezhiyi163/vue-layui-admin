@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div :id="'layui-'+$root.store.bgcolor">
 		<textarea id="textareas" rows="" cols=""></textarea>
 	</div>
 </template>

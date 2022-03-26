@@ -1,5 +1,5 @@
 <template>
-	<div class="main">
+	<div :id="'layui-'+$root.store.bgcolor" class="main">
 		<div class="wrap">
 		  <div class="home">
 			<div class="nav">

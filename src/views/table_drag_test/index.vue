@@ -1,5 +1,5 @@
 <template>
-	<div class="main">
+	<div :id="'layui-'+$root.store.bgcolor" class="main">
 		<div type="button" class="layui-btn" @click="$router.push({path:'/home/table_sub/form_new'})">添加</div>
 		<div class="el-tables">
 			<el-table :data="tableData" style="width: 100%" row-key="id">

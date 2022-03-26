@@ -1,5 +1,5 @@
 <template>
-	<div class="homemain">
+	<div :id="'layui-'+$root.store.bgcolor" class="homemain">
 		<div class="toppart">
 			本后台项目直接单独使用vue框架可进行搭建的系统架构源码文件：<br/>
 			login.vue,Home.vue,leftnav.vue,tabs.vue,_.vue,chatview.vue(聊天组件，酌情去掉)<br/>main.js,routerMap.js,recurrence-router.js,common.js<br/><br/>
@@ -20,16 +20,19 @@
 				<div class="num_data">100</div>
 			</div>
 		</div>
+		<div class="toppart">
+			hellolocalstore:{{$root.store.test}}<br/>
+			hellolocalstoreMixin:{{$root.store.test2}}<br/>
+			hellolocalstoreConputed:{{$root.store.changetest}}
+		</div>
 	</div>
 </template>
 
 <script>
 	export default {
-		data(){
-			return {
-				
-			}
-		},
+		mounted(){
+			this.$root.store.storetest()
+		}
 	}
 </script>
 
@@ -42,7 +45,7 @@
 	}
 	.numdatawrap {
 		padding: 20px 0 25px;
-		margin: 0 20px;
+		margin: 0 20px 20px;
 		background-color: white;
 	}
 	.numdatawrap:after {

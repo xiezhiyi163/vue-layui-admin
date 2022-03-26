@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div :id="'layui-'+$root.store.bgcolor">
 		<div style="padding: 20px;">某个用户的权限配置：</div>
 		<div class="main">
 			<div class="treemap">

@@ -1,5 +1,5 @@
 <template>
-	<div class="main">
+	<div :id="'layui-'+$root.store.bgcolor" class="main">
 		<div class="all-swiper">
 		  <div style="width: 1000px;margin: auto;padding-bottom: 20px;">
 			<anislider></anislider>
