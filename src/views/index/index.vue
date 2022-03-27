@@ -1,5 +1,5 @@
 <template>
-	<div :id="'layui-'+$root.store.bgcolor" class="homemain">
+	<div :id="'layui-'+store.bgcolor" class="homemain">
 		<div class="toppart">
 			本后台项目直接单独使用vue框架可进行搭建的系统架构源码文件：<br/>
 			login.vue,Home.vue,leftnav.vue,tabs.vue,_.vue,chatview.vue(聊天组件，酌情去掉)<br/>main.js,routerMap.js,recurrence-router.js,common.js<br/><br/>
@@ -29,8 +29,53 @@
 </template>
 
 <script>
+	import { reactive,getCurrentInstance,watch,ref,onMounted} from 'vue'	
 	export default {
+		data(){
+			return {
+				indextest:1
+			}
+		},
+		setup(props,cont){
+			//组合式api的全局root获取
+			//--------
+			var {proxy} = reactive(getCurrentInstance())
+			var {store} = reactive(proxy.$root)
+			// console.log(store) //可直接store修改对应的data，调用对应的方法
+			//--------
+			//
+			//watch监听处理
+			//--------
+			var count = ref({num:{num:0}})
+			//watch深度监听
+			watch([count],(n,o)=>{
+				// console.log(23424,[...n])
+			},{
+				deep:true
+			})
+			count.value.num.num++
+			//--------
+			//
+			//外面数据获取
+			//--------
+			var $this = reactive(getCurrentInstance())
+			onMounted(()=>{
+				// console.log($this.data)
+			})
+			//--------
+			//
+			return {
+				proxy,
+				store,
+				count,
+				$this
+			}
+		},
 		mounted(){
+			// console.log(this.indextest)
+			// setTimeout(()=>{
+			// 	console.log(this.count)
+			// },2000)
 			this.$root.store.storetest()
 		}
 	}

@@ -1,5 +1,5 @@
 <template>
-	<div :id="'layui-'+$root.store.bgcolor" class="main">
+	<div :id="'layui-'+store.bgcolor" class="main">
 		<div class="all-swiper">
 		  <div style="width: 1000px;margin: auto;padding-bottom: 20px;">
 			<anislider></anislider>
@@ -16,7 +16,19 @@
     components:{
       anislider,
       singlewithmoreSlider,
-    }
+    },
+	watch:{
+		'$root.store':{
+			immediate:true,
+			deep:true,
+			handler(o,n) {
+				this.store = {}
+				for(var i in this.$root.store) {
+					this.store[i] = this.$root.store[i]
+				}
+			}
+		}
+	},
   }
 </script>
 

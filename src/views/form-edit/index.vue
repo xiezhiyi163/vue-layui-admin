@@ -1,5 +1,5 @@
 <template>
-	<div :id="'layui-'+$root.store.bgcolor" class="main">
+	<div :id="'layui-'+store.bgcolor" class="main">
 		<h3 style="padding: 20px;">新建项目</h3>
 		<div class="form-tables">
 			<div class="formwrap layui-form">
@@ -116,6 +116,18 @@
 					var l = confirm('确定离开页面？')
 					if(l){
 						next()
+					}
+				}
+			}
+		},
+		watch:{
+			'$root.store':{
+				immediate:true,
+				deep:true,
+				handler(o,n) {
+					this.store = {}
+					for(var i in this.$root.store) {
+						this.store[i] = this.$root.store[i]
 					}
 				}
 			}

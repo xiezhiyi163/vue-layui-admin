@@ -1,5 +1,5 @@
 <template>
-	<div :id="'layui-'+$root.store.bgcolor">
+	<div :id="'layui-'+store.bgcolor">
 		<div style="padding: 20px;">某个用户的权限配置：</div>
 		<div class="main">
 			<div class="treemap">
@@ -65,6 +65,18 @@
 				setroot(templist)
 				this.$layui.layer.msg('提交权限配置到对应角色权限')
 			},
+		},
+		watch:{
+			'$root.store':{
+				immediate:true,
+				deep:true,
+				handler(o,n) {
+					this.store = {}
+					for(var i in this.$root.store) {
+						this.store[i] = this.$root.store[i]
+					}
+				}
+			}
 		},
 		mounted() {
 			layui.use(['layer','tree'],()=>{

@@ -1,5 +1,5 @@
 <template>
-	<div :id="'layui-'+$root.store.bgcolor" class="main">
+	<div :id="'layui-'+store.bgcolor" class="main">
 		<div type="button" class="layui-btn" @click="$router.push({path:'/home/table_sub/form_new'})">添加</div>
 		<div class="el-tables">
 			<el-table :data="tableData" style="width: 100%" row-key="id">
@@ -110,6 +110,18 @@
 			onEnd() {
 				this.drag=false;
 			},
+		},
+		watch:{
+			'$root.store':{
+				immediate:true,
+				deep:true,
+				handler(o,n) {
+					this.store = {}
+					for(var i in this.$root.store) {
+						this.store[i] = this.$root.store[i]
+					}
+				}
+			}
 		},
 	})
 </script>

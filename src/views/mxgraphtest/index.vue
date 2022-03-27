@@ -1,5 +1,5 @@
 <template>
-	<div :id="'layui-'+$root.store.bgcolor" class="main">
+	<div :id="'layui-'+store.bgcolor" class="main">
 		<div style="padding: 20px;">仅作基础演示：</div>
 		<div style="background-color: white;padding: 20px;">
 			<div id="mxgraph-demo"></div>
@@ -270,6 +270,18 @@
 					
 				}finally{
 					model.endUpdate()//监听结束
+				}
+			}
+		},
+		watch:{
+			'$root.store':{
+				immediate:true,
+				deep:true,
+				handler(o,n) {
+					this.store = {}
+					for(var i in this.$root.store) {
+						this.store[i] = this.$root.store[i]
+					}
 				}
 			}
 		},

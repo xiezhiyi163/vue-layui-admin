@@ -36,6 +36,23 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ```
 ### 通过操作app.vue的全局api，this.$root来实现app.vue里面的数据，甚至是app.vue引入组件的实例的数据的读取和修改
 ### 来实现通过app.vue中间层去直接获取或者修改数据来每一个页面实时同步使用
+选项api里面，通过watch把全局数据写到当前页面this去获取
+watch:{
+    '$root.store':{
+        immediate:true,
+        deep:true,
+        handler(o,n) {
+            this.store = {}
+            for(var i in this.$root.store) {
+                this.store[i] = this.$root.store[i]
+            }
+        }
+    }
+},
+组合api的setup里面
+import { reactive,getCurrentInstance } from 'vue'
+var { proxy }= reactive(getCurrentInstance())//vue实例获取，setup里面获取
+var { store } = reactive(proxy.$root)
 ```
 
 ### 项目描述（重点权限请求处理）

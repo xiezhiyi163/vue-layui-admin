@@ -1,5 +1,5 @@
 <template>
-	<div :id="'layui-'+$root.store.bgcolor" style="min-width: 355px;">
+	<div :id="'layui-'+store.bgcolor" style="min-width: 355px;">
 		<!-- 分类 -->
 		<div class="type">
 			<div class="typeitem" :class="{typeitemactive:typechange == 2}" @click="typechange = 2">
@@ -206,6 +206,18 @@
 					this.winheight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
 					this.winw = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
 				})
+			}
+		},
+		watch:{
+			'$root.store':{
+				immediate:true,
+				deep:true,
+				handler(o,n) {
+					this.store = {}
+					for(var i in this.$root.store) {
+						this.store[i] = this.$root.store[i]
+					}
+				}
 			}
 		},
 		mounted(){

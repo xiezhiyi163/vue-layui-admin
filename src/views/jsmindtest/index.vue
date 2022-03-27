@@ -1,5 +1,5 @@
 <template>
-	<div :id="'layui-'+$root.store.bgcolor" class="main">
+	<div :id="'layui-'+store.bgcolor" class="main">
 		<div style="padding: 20px;">仅作基础演示：</div>
 		<div style="background-color: white;">
 			<div id="jsmindtest"></div>
@@ -49,6 +49,18 @@
 				// alert(mind_data);
 				jm.add_node("sub2","sub23", "new node", {"background-color":"red"});
 				jm.set_node_color('sub21', 'green', '#ccc');
+			}
+		},
+		watch:{
+			'$root.store':{
+				immediate:true,
+				deep:true,
+				handler(o,n) {
+					this.store = {}
+					for(var i in this.$root.store) {
+						this.store[i] = this.$root.store[i]
+					}
+				}
 			}
 		},
 		mounted(){

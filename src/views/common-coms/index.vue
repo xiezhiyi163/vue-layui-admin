@@ -1,5 +1,5 @@
 <template>
-	<div :id="'layui-'+$root.store.bgcolor" class="main">
+	<div :id="'layui-'+store.bgcolor" class="main">
 		<div class="wrap">
 		  <div class="home">
 			<div class="nav">
@@ -104,7 +104,19 @@ export default {
 	  changesearch:function(type) {
 		  this.searchtype = type
 	  }
-  }
+  },
+  watch:{
+		'$root.store':{
+			immediate:true,
+			deep:true,
+			handler(o,n) {
+				this.store = {}
+				for(var i in this.$root.store) {
+					this.store[i] = this.$root.store[i]
+				}
+			}
+		}
+	},
 };
 </script>
 
