@@ -144,7 +144,7 @@
 		width: 500px;
 		height: 400px;
 		transform: translateY(-50%);
-		box-shadow: 0 0 10px 0 #ccc;
+		box-shadow: 0 5px 10px 0 #777;
 		background-color: #fff;
 		text-align: left;
 	}
