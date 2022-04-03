@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import store from './components/store.vue'
+import store from './store/store.vue'
 export default {
 	components:{
 		store,

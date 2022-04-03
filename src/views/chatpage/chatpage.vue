@@ -206,18 +206,16 @@
 					this.winheight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
 					this.winw = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
 				})
+				window.addEventListener('storage',(e)=>{
+					if(e.key == 'localbgcolor'){
+						this.$root.store.bgcolor = e.newValue
+					}
+				})
 			}
 		},
-		watch:{
-			'$root.store':{
-				immediate:true,
-				deep:true,
-				handler(o,n) {
-					this.store = {}
-					for(var i in this.$root.store) {
-						this.store[i] = this.$root.store[i]
-					}
-				}
+		computed:{
+			store(){
+				return this.$root.store
 			}
 		},
 		mounted(){

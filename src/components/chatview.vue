@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="chatbox" :style="{height:winheight - 71 + 'px',width:winw - 40 +'px',right:ifshowchat == 1?'':'-100%'}">
+		<div class="chatbox" :style="{height:!$route.meta.hasOwnProperty('isform')?((winheight - 71) + 'px'):((winheight - 41) + 'px'),width:winw - 40 +'px',right:ifshowchat == 1?'':'-100%',top:!$route.meta.hasOwnProperty('isform')?'70px':'40px'}">
 			<div class="iframe">
 				<iframe :src="link" style="width:100%;height: 100%;" frameborder="0"></iframe>
 			</div>

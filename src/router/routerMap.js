@@ -1,4 +1,6 @@
 import {_rec_routes} from './recurrence-router.js'
+import {_sub_routes} from './sub-router.js'
+import {_frames_page_router} from './frames-page-router.js'
 import login from "../views/login.vue";
 import Home from "../views/Home.vue";
 
@@ -71,52 +73,12 @@ var _routes = [
 			
 			
 			*/
-			//左侧导航title为表格的标签页跳转进去的二级页面
-			{
-				path: 'table_sub',
-				name: 'table_sub',
-				root: -1,
-				meta:{
-					title:'表格'//跟第一部分的导航的标题匹配，方便对应页面
-				},
-				component: () => import( /* webpackChunkName: "about" */ "../views/_.vue"),
-				children: [{
-						path: "form_:type",
-						name: "form-edit",
-						root: -1,
-						meta:{
-							subpageshowleft:1,
-							isform:1,
-						},
-						component: () => import( /* webpackChunkName: "about" */
-							"../views/form-edit/index.vue"),
-					},
-					{
-						path: "form2_:type",
-						name: "form-edit2",
-						root: -1,
-						meta:{
-							subpageshowleft:0,
-							isform:0,
-						},
-						component: () => import( /* webpackChunkName: "about" */
-							"../views/form-edit/index2.vue"),
-					},
-				]
-			},
+			//path命名规范："一级路径_sub",然后children里面就是要进来的页面
+			..._sub_routes
 		]
 	},
 	//这里的页面是iframe打开的页面
-	{
-		path: '/admindoc',
-		root: -1,
-		component: () => import('../views/project-doc/index.vue')
-	},
-	{
-		path: '/chatpage',
-		root: -1,
-		component: () => import('../views/chatpage/chatpage.vue')
-	}
+	..._frames_page_router
 ]
 
 export {

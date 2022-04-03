@@ -1,10 +1,34 @@
 <script>
+/*
+
+
+	store
+
+	page use -> 
+
+		options api :
+
+			use at computed to read
+
+			change by this.$root.store.xxx = xxx
+
+		composition api :
+
+			use by this :
+			
+			var {proxy} = reactive(getCurrentInstance())
+			var {store} = reactive(proxy.$root)
+
+			you can change or use with store.xxx
+
+
+*/
 import store2 from './storeMixin.js'
 export default {
 	mixins:[store2],
     data() {
         return {
-			bgcolor:'',
+			bgcolor:window.localStorage.getItem('localbgcolor')||'',
             test:1
         }
     },
@@ -16,6 +40,10 @@ export default {
 	methods:{
 		storetest:function(){
 			this.test = 8
+		},
+		changeGlobalColor:function(color,bgcolor) {
+			this.bgcolor = bgcolor
+			window.localStorage.setItem('localbgcolor',bgcolor)
 		}
 	},
     mounted() {

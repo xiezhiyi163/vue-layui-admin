@@ -66,16 +66,9 @@
 				this.$layui.layer.msg('提交权限配置到对应角色权限')
 			},
 		},
-		watch:{
-			'$root.store':{
-				immediate:true,
-				deep:true,
-				handler(o,n) {
-					this.store = {}
-					for(var i in this.$root.store) {
-						this.store[i] = this.$root.store[i]
-					}
-				}
+		computed:{
+			store(){
+				return this.$root.store
 			}
 		},
 		mounted() {

@@ -569,10 +569,6 @@
 			settolocal:function() {
 				localStorage.setItem('memo',this.memo)
 			},
-			// 修改全局颜色
-			changeGlobalColor:function(color,bg) {
-				this.$root.store.bgcolor = bg
-			}
 		},
 		watch:{
 			$route(news,old){
@@ -590,7 +586,7 @@
 				window.addEventListener('resize',() =>{
 					this.systemdomset()
 				})
-				this.changeGlobalColor(null,'7db0ef')
+				// this.$root.store.changeGlobalColor(null,'7db0ef')
 				//#data-----------------
 				this.$layui = layui
 				this.ifhidden = 'visible'

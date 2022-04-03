@@ -1,67 +1,74 @@
 <template>
-	<div :id="'layui-'+store.bgcolor" class="main">
-		<h3 style="padding: 20px;">新建项目</h3>
-		<div class="form-tables">
-			<div class="formwrap layui-form">
-				<div class="layui-form-item">
-					<label class="layui-form-label">输入框</label>
-					<div class="layui-input-block">
-						<input type="text" name="" placeholder="请输入" autocomplete="off" class="layui-input">
+	<div>
+		<top_pack_refresh/>
+		<div :id="'layui-'+store.bgcolor" class="main">
+			<h3 style="padding: 20px;">新建项目</h3>
+			<div class="form-tables">
+				<div class="formwrap layui-form">
+					<div class="layui-form-item">
+						<label class="layui-form-label">输入框</label>
+						<div class="layui-input-block">
+							<input type="text" name="" placeholder="请输入" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">选择框</label>
+						<div class="layui-input-block">
+							<select name="city" class="layui-select" lay-search>
+								<option value=""></option>
+								<option value="0">北京</option>
+								<option value="1">上海</option>
+								<option value="2">广州</option>
+								<option value="3">深圳</option>
+								<option value="4">杭州</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">开关</label>
+						<div class="layui-input-block">
+							<input type="checkbox" name="switch" lay-skin="switch">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">单选框</label>
+						<div class="layui-input-block">
+							<input type="radio" name="sex" value="男" title="男">
+							<input type="radio" name="sex" value="女" title="女" checked>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">树状选择</label>
+						<div class="layui-input-block">
+							<input type="text" id="search" value="1" @change="valuechange" name="" placeholder="请输入" autocomplete="off" class="layui-input">
+							<div id="checktree" class="layui-tree-search"></div>
+						</div>
+					</div>
+					<div class="layui-form-item layui-form-text">
+						<label class="layui-form-label">文本域</label>
+						<div class="layui-input-block">
+							<textarea name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
+						</div>
 					</div>
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">选择框</label>
-					<div class="layui-input-block">
-						<select name="city" class="layui-select" lay-search>
-							<option value=""></option>
-							<option value="0">北京</option>
-							<option value="1">上海</option>
-							<option value="2">广州</option>
-							<option value="3">深圳</option>
-							<option value="4">杭州</option>
-						</select>
-					</div>
-				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">开关</label>
-					<div class="layui-input-block">
-						<input type="checkbox" name="switch" lay-skin="switch">
-					</div>
-				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">单选框</label>
-					<div class="layui-input-block">
-						<input type="radio" name="sex" value="男" title="男">
-						<input type="radio" name="sex" value="女" title="女" checked>
-					</div>
-				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">树状选择</label>
-					<div class="layui-input-block">
-						<input type="text" id="search" value="1" @change="valuechange" name="" placeholder="请输入" autocomplete="off" class="layui-input">
-						<div id="checktree" class="layui-tree-search"></div>
-					</div>
-				</div>
-				<div class="layui-form-item layui-form-text">
-					<label class="layui-form-label">文本域</label>
-					<div class="layui-input-block">
-						<textarea name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
-					</div>
-				</div>
+				<div type="button" class="layui-btn" @click="$router.push({path:'/home/table_sub/form2_new'})">下一步</div>
 			</div>
-			<div type="button" class="layui-btn" @click="$router.push({path:'/home/table_sub/form2_new'})">下一步</div>
 		</div>
 	</div>
 </template>
 
 <script>
 	import {ifleftclick} from '../../assets/js/common.js'
+	import top_pack_refresh from '../../components/subcoms/top_back_refresh.vue'
 	export default {
 		data() {
 			return {
 				forms: '',
 				trees: ''
 			}
+		},
+		components:{
+			top_pack_refresh,
 		},
 		methods: {
 			renderform: function() {
@@ -120,16 +127,9 @@
 				}
 			}
 		},
-		watch:{
-			'$root.store':{
-				immediate:true,
-				deep:true,
-				handler(o,n) {
-					this.store = {}
-					for(var i in this.$root.store) {
-						this.store[i] = this.$root.store[i]
-					}
-				}
+		computed:{
+			store(){
+				return this.$root.store
 			}
 		},
 		mounted() {
