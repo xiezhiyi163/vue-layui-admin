@@ -35,6 +35,7 @@ var _routes = [
 				//navicon.type，img和font两种类型
 				//navicon.icon，使用的路径或者icon
 				
+				"../views/_.vue"是多级导航要用到的视口文件组件，每一个父级导航都要使用
 				 
 			*/
 			..._rec_routes,
