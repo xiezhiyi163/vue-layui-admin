@@ -227,10 +227,11 @@
 		height: 30px;
 		line-height: 30px;
 		vertical-align: bottom;
-		border: 1px solid #687cac;
+		/* border: 1px solid #687cac; */
+		border: 1px solid transparent;
 		border-bottom: 0;
 		cursor: pointer;
-		background-color: #687cac;
+		/* background-color: #687cac; */
 		color: #fff;
 	}
 	.tabs_itemin:hover .tabs_close{
@@ -245,7 +246,8 @@
 		/* border-radius: 10px 10px 0 0; */
 		background-color: #f5f5f5;
 		border: 1px solid #f5f5f5;
-		color: #0000FF;
+		/* color: #0000FF; */
+		color: #8b84b5;
 		transition: 300ms;
 	}
 	.tabs_itemright {

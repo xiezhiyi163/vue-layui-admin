@@ -661,7 +661,7 @@
 		left: 0;
 		width: 100%;
 		height: 40px;
-		background-color: #6194df;
+		background-color: #5c5c9d;
 		z-index: 8;
 	}
 	
@@ -823,7 +823,8 @@
 		top: 40px;
 		left: 0px;
 		width: 100%;
-		background-color: #687cac;
+		/* background-color: #687cac; */
+		background-color: #8b84b5;
 		z-index: 5;
 		box-shadow: 0 0 10px 0 #666;
 	}
