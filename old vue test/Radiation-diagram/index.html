@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			*{margin: 0;padding: 0;}
+		</style>
+	</head>
+	<body>
+		<div id="mountNode"></div>
+		<script src="./static/common/Radiation-diagram.js"></script>
+		<script type="text/javascript">
+			
+			const data = {
+			  nodes: [
+			    { id: 'node0', size: 50 },
+			    { id: 'node1', size: 30 },
+			    { id: 'node2', size: 30 },
+			    { id: 'node3', size: 30 },
+			    { id: 'node4', size: 30 },
+			    { id: 'node5', size: 30 },
+			    { id: 'node6', size: 30 },
+			    { id: 'node7', size: 30 },
+			    { id: 'node8', size: 30 },
+			    { id: 'node9', size: 30 },
+			  ],
+			  edges: [
+			    { source: 'node0', target: 'node1' },
+			    { source: 'node0', target: 'node2' },
+			    { source: 'node0', target: 'node3' },
+			    { source: 'node0', target: 'node4' },
+			    { source: 'node0', target: 'node5' },
+			    { source: 'node0', target: 'node6' },
+			    { source: 'node0', target: 'node7' },
+			    { source: 'node0', target: 'node8' },
+			    { source: 'node0', target: 'node9' },
+			  ],
+			};
+			const container = document.getElementById('mountNode');
+			const nodes = data.nodes;
+			const graph = new G6.Graph({
+			  container: 'mountNode',
+			  renderer: 'svg',
+			  width:window.innerWidth,
+			  // height:300,
+			  height:window.innerHeight,
+			  layout: {
+			    type: 'force',
+			    preventOverlap: true,
+			    linkDistance: (d) => {
+			      if (d.source.id === 'node0') {
+			        return 100;
+			      }
+			      return 30;
+			    },
+			    nodeStrength: (d) => {
+			      if (d.isLeaf) {
+			        return -50;
+			      }
+			      return -10;
+			    },
+			    edgeStrength: (d) => {
+			      if (d.source.id === 'node1' || d.source.id === 'node2' || d.source.id === 'node3') {
+			        return 0.7;
+			      }
+			      return 0.1;
+			    },
+			  },
+			  defaultNode: {
+			    color: '#5B8FF9',
+			  },
+			  modes: {
+			    default: ['drag-canvas'],
+			  },
+			});
+			const resizes = function() {
+				graph.changeSize(window.innerWidth, window.innerHeight);
+				// graph.changeSize(window.innerWidth, 300);
+				window.onresize = () => {
+					if (!graph || graph.get('destroyed')) return;
+					graph.changeSize(window.innerWidth, window.innerHeight);
+					// graph.changeSize(window.innerWidth, 300);
+				};
+			}
+			const refreshDragedNodePosition = function (e) {
+			  const model = e.item.get('model');
+			  model.fx = e.x;
+			  model.fy = e.y;
+			}
+			graph.data({
+			  nodes,
+			  edges: data.edges.map(function (edge, i) {
+			    edge.id = 'edge' + i;
+			    return Object.assign({}, edge);
+			  }),
+			});
+			graph.render();
+			
+			graph.on('node:dragstart', function (e) {
+			  graph.layout();
+			  refreshDragedNodePosition(e);
+			});
+			graph.on('node:drag', function (e) {
+				graph.layout();
+			  refreshDragedNodePosition(e);
+			});
+			graph.on('node:dragend', function (e) {
+				graph.layout();
+			  e.item.get('model').fx = null;
+			  e.item.get('model').fy = null;
+			});
+			resizes()
+		</script>
+	</body>
+</html>

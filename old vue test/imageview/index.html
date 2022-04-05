@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<title></title>
+		<style>
+			*{margin: 0;padding: 0;}
+			.bg {
+				position: relative;
+				background-color: #333;
+				overflow: hidden;
+			}
+			.imgwrap {
+				position: relative;
+				width: 100%;
+				height: 100%;
+				text-align: center;
+				user-select: none;
+				transition: transform 300ms;
+			}
+			.imgwrap img {
+				display: inline-block;
+				position: relative;
+				top: 50%;
+				left: 0;
+				max-width: 100%;
+				max-height: 100%;
+				transform: translateY(-50%);
+			}
+			.btnbottom {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				height: 60px;
+				background-color: rgba(0,0,0,.3);
+			}
+			.btnitem {
+				margin-top: 10px;
+				width: 70px;
+				height: 40px;
+				line-height: 40px;
+				background-color: #75718d;
+				border-radius: 8px;
+				text-align: center;
+				color: white;
+				user-select: none;
+			}
+			.btnleft {
+				float: left;
+				margin-left: 10px;
+			}
+			.btnright {
+				float: right;
+				margin-right: 10px;
+			}
+			.btnright1 {
+				position: absolute;
+				top: 0px;
+				right: 10px;
+				font-size: 30px;
+				box-shadow: 0 0 10px 0 #333;
+			}
+			.btnright2 {
+				position: absolute;
+				top: 50px;
+				right: 10px;
+				font-size: 30px;
+				box-shadow: 0 0 10px 0 #333;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="bg" :style="{height:winheight+'px',width:winwidth+'px'}">
+				<!-- view -->
+				<div class="imgwrap" :style="{transform:'scale(' +(1+scale_)+ ')',top:top_+'px',left:left_+'px'}" @mousedown="movestart({type:1})" @mousemove="moveing({type:1})" @mouseup="moveend({type:1})" @touchstart="movestart({type:2})" @touchmove="moveing({type:2})" @touchend="moveend({type:2})">
+					<img src="./img/E0tgOcqVoAYb3jK.jpg" style="pointer-events: none;">
+				</div>
+				<!-- btn -->
+				<div class="btnitem btnright1" @click="plussize()">+</div>
+				<div class="btnitem btnright2" @click="downsize()">-</div>
+				<div class="btnbottom">
+					<div class="btnitem btnright" @click="top_ = 0,left_ = 0,temptop = 0,templeft = 0,scale_ = 0">恢复</div>
+				</div>
+			</div>
+		</div>
+		<script src="./static/js/common/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			new Vue({
+				el:'#app',
+				data:{
+					winheight:0,
+					winwidth:0,
+					scale_:0,					//比例
+					left_:0,					//位置
+					top_:0,						//位置
+					temptop:0,					//临时位置
+					templeft:0,					//临时位置
+					mousemoveflag:0,
+					sx:0,						//拖动的x坐标
+					sy:0,						//拖动的y坐标
+				},
+				methods:{
+					plussize:function(){
+						this.scale_ = this.scale_ + .2
+						if(this.scale_>2){
+							this.scale_ = 2
+						}
+					},
+					downsize:function(){
+						this.scale_ = this.scale_ - .2
+						if(this.scale_<0){
+							this.scale_ = 0
+						}
+					},
+					movestart:function(e){
+						var ev = event || window.event || e
+						if(e.type == 1){
+							this.mousemoveflag = 1
+							this.sx = ev.pageX
+							this.sy = ev.pageY
+						}else{
+							this.sx = ev.touches[0].pageX
+							this.sy = ev.touches[0].pageY
+						}
+						this.temptop = this.top_
+						this.templeft = this.left_
+					},
+					moveing:function(e){
+						var ev = event || window.event || e
+						if(e.type == 1){
+							if(this.mousemoveflag){
+								var lastx = ev.pageX - this.sx
+								var lasty = ev.pageY - this.sy
+								this.top_ = this.temptop + lasty
+								this.left_ = this.templeft + lastx
+							}
+						}else{
+							var lastx = ev.touches[0].pageX - this.sx
+							var lasty = ev.touches[0].pageY - this.sy
+							this.top_ = this.temptop + lasty
+							this.left_ = this.templeft + lastx
+						}
+					},
+					moveend:function(e){
+						if(e.type == 1){
+							this.mousemoveflag = 0
+						}
+					},
+					//
+					globaldomset:function(){
+						this.winheight = window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight
+						this.winwidth = window.innerWidth || document.body.clientWidth || document.documentElement.clientWidth
+					},
+					resize:function(){
+						this.globaldomset()
+						window.addEventListener('resize',()=>{
+							this.globaldomset()
+						})
+					}
+				},
+				mounted(){
+					this.resize()
+				}
+			})
+		</script>
+	</body>
+</html>

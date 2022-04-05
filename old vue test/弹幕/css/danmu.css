@@ -1,0 +1,241 @@
+@charset "utf-8";
+*{
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	border: 0;
+	outline: none;
+}
+#app{
+	-webkit-backface-visibility: hidden;
+	   -moz-backface-visibility: hidden;
+	   -ms-backface-visibility: hidden;
+	   backface-visibility: hidden;
+	 
+	   -webkit-perspective: 1000;
+	   -moz-perspective: 1000;
+	   -ms-perspective: 1000;
+	   perspective: 1000;
+}
+.clearboth {
+	display: block;
+	clear: both;
+}
+/**/
+#container {
+	width: 1000px;
+	margin: auto;
+}
+.mainslider,.adslider,.mainitemwrap,.mainitemwrap2 {
+	height: 270px;
+	float: left;
+}
+.mainslider {
+	width: 430px;
+	background-color: #ccc;
+}
+.adslider {
+	width: 240px;
+	background-color: #ccc;
+}
+.mainitemwrap,.mainitemwrap2 {
+	width: 570px;
+	position: relative;
+	overflow: hidden;
+}
+.mainitemwrap2 {
+	width: 760px;
+}
+.mainitems {
+	width: 1140px;
+}
+.mainitems2 {
+	width: 1330px;
+}
+.items,.items2{
+	width: 180px;
+	height: 130px;
+	background-color: #ccc;
+	float: left;
+}
+.items{
+	margin: 0 0px 10px 10px;
+}
+.items2{
+	margin: 0 10px 10px 0px;
+}
+/* 
+	danmu 
+*/
+/* danmubox*/
+.danmutype p {
+	float: left;
+	width: 50%;
+	text-align: center;
+	padding: 20px 0;
+	cursor: pointer;
+}
+.danmutype .active {
+	background-color: #ccc;
+}
+.danmutypehidden {
+	position: relative;
+	overflow: hidden;
+	height: 0;
+}
+#danmubox {
+	height: 600px;
+	position: relative;
+	background-color: #000;
+}
+.danmubg {
+	font-size: 90px;
+	text-align: center;
+	color: #999;
+	line-height: 600px;
+}
+.danmubg div {
+	display: inline-block;
+	width: 100%;
+	line-height: normal;
+}
+.danmunbgicon {
+	width: 150px;
+	height: 150px;
+	margin: 120px auto 30px;
+	background-color: #999;
+	line-height: 150px;
+	color: #000;
+	border-radius: 50%;
+}
+#danmuwrap {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+#danmuwrap p,#danmuwrap span {
+	color: white;
+	text-shadow:  #000 1px 0 0, #000 0 1px 0, #000 -1px 0 0, #000 0 -1px 0;
+	font-size: 23px;
+}
+#danmuwrap p {
+	white-space: nowrap;
+	position: absolute;
+	width: 100%;
+	height: 30px;
+	opacity: 1;
+}
+#danmuwrap span {
+	white-space: nowrap;
+	position: absolute;
+	display: inline-block;
+	padding: 0 8px;
+}
+.inputwrap {
+	height: 40px;
+	background-color: #bbb;
+	border-bottom: 1px solid #666;
+	position: relative;
+	overflow: hidden;
+}
+.inputwrap button {
+	width: 80px;
+	height: 40px;
+	float: right;
+}
+.inputwrap input {
+	width: 100%;
+	padding: 12px 0;
+}
+.inputwrap div {
+	margin-right: 0px;
+	padding: 0 20px;
+	background-color: white;
+	margin: 0 80px 0 0;
+	position: relative;
+	overflow: hidden;
+}
+@keyframes centerdanmudisplaynone{
+	0%{
+		opacity: 1;
+	}
+	99.99999%{
+		opacity: 1;
+	}
+	100%{
+		opacity: 0;
+	}
+}
+
+/* danmuboxb */
+#danmuboxb2 {
+	height:640px ;
+	position: relative;
+	background-color: #000;
+	overflow: hidden;
+}
+#danmuwrapb {
+	position: absolute;
+	top: 30px;
+	left: 0;
+}
+.danmuwrapb {
+	height: 60px;
+	white-space: nowrap;
+}
+.danmuwrapb span{
+	display: inline-block;
+	height: 20px;
+	margin-right: 18px;
+	padding:8px 20px;
+	vertical-align: top;
+	border-radius: 40px;
+	color: white;
+	background-color: #999;
+}
+
+/* 清浮动 */
+
+.danmutype:after {
+	content: '';
+	display: block;
+	clear: both;
+}
+
+
+@media (min-width:1200px) and (max-width:1400px) {
+	#container {
+		width: 1190px;
+	}
+	.mainitemwrap {
+		width: 760px;
+	}
+	.mainitemwrap2 {
+		width: 950px;
+	}
+}
+@media (min-width:1400px) and (max-width:1600px) {
+	#container {
+		width: 1380px;
+	}
+	.mainitemwrap {
+		width: 950px;
+	}
+	.mainitemwrap2 {
+		width: 1140px;
+	}
+}
+@media (min-width:1600px) {
+	#container {
+		width: 1570px;
+	}
+	.mainitemwrap {
+		width: 1140px;
+	}
+	.mainitemwrap2 {
+		width: 1330px;
+	}
+}

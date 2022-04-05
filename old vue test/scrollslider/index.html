@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<title></title>
+		<style>
+			*{margin: 0;padding: 0;}
+			body,html{
+				overflow: hidden;/* 滚动轮播隐藏滚动条 */
+			}
+			.leftnavs {
+				position: fixed;
+				left: 0;
+				top: 50%;
+				transform: translateY(-50%);
+				z-index: 2;
+			}
+			.leftnavsitem {
+				width: 40px;
+				padding: 10px;
+				margin-bottom: 20px;
+				background-color: #FFCC66;
+				transition: 300ms;
+				cursor: pointer;
+			}
+			.leftnavsitem:hover {
+				padding-left: 30px;
+			}
+			/* 滚屏轮播样式 */
+			#sliderwrap {
+				position: relative;
+				user-select: none;
+				transition: 1000ms;
+			}
+			.slideritem {
+				text-align: center;
+			}
+			.dots {/* 滚动轮播圆点 */
+				position: fixed;
+				right: 10px;
+				top: 50%;
+				width: 20px;
+				transform: translateY(-50%);
+			}
+			.dotsitem {
+				width: 20px;
+				height: 20px;
+				border-radius: 50%;
+				background-color: #666;
+				border: 1px solid #fff;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="leftnavs">
+				<div class="leftnavsitem" @click="toslide()">滑动形式</div>
+				<div class="leftnavsitem" @click="tofade()">叠加形式</div>
+			</div>
+			<div @touchstart="movestart" @touchmove="moveing" @touchend="moveend">
+				<div id="sliderwrap" :style="{top:-dataind * winheight + 'px'}">
+					<div class="slideritem" v-for="(v,i) in datas" :style="{height:winheight+'px',lineHeight:winheight+'px',backgroundColor:v.bgcolor}">滑动滚屏{{v.title}}</div>
+				</div>
+				<div class="dots">
+					<div class="dotsitem" v-for="(v,i) in datas" @click="scrollslidermod(i)"></div>
+				</div>				
+			</div>
+		</div>
+		<script src="./static/js/common/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			new Vue({
+				el:'#app',
+				data:{
+					winheight:0,
+					winwidth:0,
+					scrollflag:1,/* 滚屏是否打开开关 */
+					sy:0,/* 滑动屏幕初始值y */
+					lastsy:0,/* 滑动屏幕最终值y */
+					dataind:0,/* 滚动轮播索引 */
+					datas:[/* 滚动轮播数组 */
+						{
+							title:'1111',
+							bgcolor:'#ccc'
+						},{
+							title:'2222',
+							bgcolor:'#61ccc5'
+						},{
+							title:'3333',
+							bgcolor:'#a697cc'
+						},{
+							title:'4444',
+							bgcolor:'#cca481'
+						},{
+							title:'5555',
+							bgcolor:'#9ab4cc'
+						},{
+							title:'6666',
+							bgcolor:'#cc96a8'
+						},
+					]
+				},
+				methods:{
+					toslide:function(){
+						window.location.replace('./index.html')
+					},
+					tofade:function(){
+						window.location.replace('./index - fade.html')
+					},
+					// 滚屏轮播方法
+					scrollslidermod:function(ind){
+						if(!this.scrollflag) return
+						this.scrollflag = 0
+						var temp = this.dataind/* 存起来，用于恢复这个索引的动画 */
+						if(temp != ind){
+							/* 恢复temp相关索引的动画 */
+						}
+						this.dataind = ind
+						setTimeout(()=>{
+							this.scrollflag = 1
+						},1000)	
+					},
+					movestart:function(e){
+						if(!this.scrollflag) return
+						var ev = event || window.event || e
+						this.sy = ev.touches[0].pageY
+					},
+					moveing:function(e){
+						if(!this.scrollflag) return
+						var ev = event || window.event || e
+						this.lastsy = ev.touches[0].pageY - this.sy
+					},
+					moveend:function(){
+						if(!this.scrollflag) return
+						this.scrollflag = 0
+						if(this.lastsy<0){
+							if(this.dataind!=this.datas.length-1){
+								var temp = this.dataind/* 存起来，用于恢复这个索引的动画 */
+								this.dataind = this.dataind + 1	/* 然后再加1 */
+							}
+						}else{
+							if(this.dataind!=0){
+								var temp = this.dataind/* 存起来，用于恢复这个索引的动画 */
+								this.dataind = this.dataind - 1/* 然后再减1 */
+							}
+						}
+						setTimeout(()=>{
+							this.scrollflag = 1
+						},1000)
+					},
+					scrollsliderinit:function(){
+						window.addEventListener('mousewheel',(e) => {
+							var wd = e.detail ?(-e.detail /3): (e.wheelDelta /120)
+							if(!this.scrollflag) return
+							this.scrollflag = 0
+							if(wd<0){
+								if(this.dataind!=this.datas.length-1){
+									var temp = this.dataind/* 存起来，用于恢复这个索引的动画 */
+									this.dataind = this.dataind + 1	/* 然后再加1 */
+								}
+							}else{
+								if(this.dataind!=0){
+									var temp = this.dataind/* 存起来，用于恢复这个索引的动画 */
+									this.dataind = this.dataind - 1	/* 然后再减1 */
+								}
+							}
+							setTimeout(()=>{
+								this.scrollflag = 1
+							},1000)
+						})
+					},
+					//
+					globaldomset:function(){
+						this.winheight = window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight
+						this.winwidth = window.innerWidth || document.body.clientWidth || document.documentElement.clientWidth
+					},
+					resize:function(){
+						this.globaldomset()
+						window.addEventListener('resize',()=>{
+							this.globaldomset()
+						})
+					}
+				},
+				mounted(){
+					this.resize()
+					//滚屏轮播初始化
+					this.scrollsliderinit()
+				}
+			})
+		</script>
+	</body>
+</html>

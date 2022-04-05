@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/danmu.css"/>
+	</head>
+	<body>
+		<div style="position: relative;height: 0;overflow: hidden;">
+			<template id="danmubox">
+				<!-- 
+					***
+					实现了的需求：
+					@能滚动，保证同时出现的时候都占满并且没有重叠
+					@能上下出现
+					@上下出现的在某一时刻自动消失，滚动过去的滚动到后面自动消失
+					***
+				 -->
+				<div>
+					<div id="danmubox">
+						<div id="danmuwrap">
+							<!-- 追加弹幕的区域 -->
+						</div>					
+						<div class="danmubg">
+							<div>
+								<p class="danmunbgicon">D</p>
+								<p>弹幕池</p>							
+							</div>
+						</div>
+					</div>
+					<div class="inputwrap">
+						<button @click="senddanmu()">发送</button>
+						<button @click="closedanmu()" v-if="bshowdanmubox">关闭弹幕</button>
+						<button @click="opendanmu()" v-if="!bshowdanmubox">打开弹幕</button>
+						<div>
+							<input type="text" placeholder="输入弹幕发送">							
+						</div>
+					</div>
+				</div>
+			</template>
+			<template id="danmuboxB">
+				<!-- 
+					***
+					实现了的需求：
+					@模拟选取热点评论作为弹幕，尽可能整齐地填满三行，
+					@然后往左滚动过来即可
+					***
+				 -->
+				<div>
+					<div id="danmuboxb2">
+						<div class="danmubg">
+							<div>
+								<p class="danmunbgicon">R</p>
+								<p>热点评论</p>							
+							</div>
+						</div>
+						<div id="danmuwrapb" :style="{left:domwidth+'px'}">
+							<p id="danmuwrapb1" class="danmuwrapb">
+							</p>
+							<p id="danmuwrapb2" class="danmuwrapb">
+							</p>
+							<p id="danmuwrapb3" class="danmuwrapb">
+							</p>
+						</div>
+					</div>
+				</div>
+			</template>
+		</div>
+		<div id="app" style="visibility: hidden;">
+			<div id="container">
+				<!-- 
+					@container
+					布局编写和弹幕功能需求，两个需求
+					布局相关：{
+						假设：180一个item宽
+						一个广告：240
+						间隔：10
+						就是：4*190+240
+						处理media的时候：一个个item地加就行
+					}
+				 -->
+				<!-- 
+					=====
+					弹幕
+					=====
+				 -->
+				 <div id="danmusystem">
+					<div class="danmutype">
+						<p @click="danmutype = 'bilibili'" :class="danmutype=='bilibili'?'active':''">video播放器弹幕系统(ie10+)</p>
+						<p @click="danmutype = 'normal'" :class="danmutype=='normal'?'active':''">热点评论弹幕系统</p>
+					</div>
+					<div :class="danmutype=='bilibili'?'':'danmutypehidden'">
+						<danmubox :danmudatas="bilibilidanmudatas"></danmubox>				
+					</div>
+					<div :class="danmutype=='normal'?'':'danmutypehidden'">
+						<danmuboxb :danmudatas="normaldanmudata"></danmuboxb>
+					</div>				
+				</div>
+				<!-- 
+					=====
+					布局
+					=====
+				 -->
+				<p style="margin: 10px 0;height: 100px;background-color: #ccc;"></p>
+				<div>
+					<div class="mainslider"></div>
+					<div class="mainitemwrap">
+						<div class="mainitems">
+							<div class="items" v-for="(v,i) in 12"></div>							
+							<div class="clearboth"></div>
+						</div>
+					</div>
+					<div class="clearboth"></div>
+				</div>
+				<p style="margin: 10px 0;height: 100px;background-color: #ccc;"></p>
+				<div style="margin-top: 10px;">
+					<div class="mainitemwrap2">
+						<div class="mainitems2">
+							<div class="items2" v-for="(v,i) in 14"></div>							
+							<div class="clearboth"></div>
+						</div>
+					</div>
+					<div class="adslider"></div>
+					<div class="clearboth"></div>
+				</div>
+			</div>
+		</div>
+		<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/danmu.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+</html>
