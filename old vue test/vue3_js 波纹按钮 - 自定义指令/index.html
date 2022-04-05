@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+				border: none;
+				outline: none;
+			}
+			/* com bowenbtn */
+			.button {
+				position: relative;
+				min-width: 60px;
+				padding: 10px;
+				overflow: hidden;
+			}
+			.buttonhover{
+				display: block;
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 1px;
+				height: 1px;
+				border-radius: 50%;
+				background-color: #fff;
+				transition: 2000ms;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app"></div>
+		<!-- vue coms template -->
+		<div style="height: 0;position: relative;overflow: hidden;">
+			<template id="radios_com">
+				<div>
+					<!-- 小程序里面自求多福吧 -->
+					<label>
+						<input type="radio" :checked="value == modelValue" :name="name" :value="value" @change="changeValue">
+						{{value == modelValue?'选中':'fail'}}
+					</label>
+				</div>
+			</template>
+			<template id="checks_com">
+				<div>
+					<!-- 小程序里面自求多福吧 -->
+					<label>
+						<input type="checkbox" :checked="check" @change="changeValue">
+						{{check?'选中':'fail'}}
+					</label>
+				</div>
+			</template>
+			<template id="inputs_com">
+				<div>
+					<input :value="modelValue" @input="changeValue" type="text" placeholder="自定义事件处理测试">
+				</div>
+			</template>
+			<template id="bowenbtn_com">
+				<div>
+					<button @click="bowenbtnclick" :id='id' class="button">
+						<!-- <slot name="btncont" :property="''"></slot> -->
+						<slot></slot>
+						<div class="buttonhover" v-if="bowenshow" :style="'transform:scale('+scale+');opacity:'+opacity+';top:'+top+';left:'+left"></div>
+					</button>
+				</div>
+			</template>
+			<template id="apps">
+				<div>
+					<!-- 
+						v-model其实可以直接变成自定义事件接收，跟react比较符合，只不过为了测自定义指令
+					 -->
+					<!-- radio 原则：name一致，选中后改变props，也要发射出来，react里面通过change发射出来 -->
+					<radios v-model="inputtext4" name="test" value="1"></radios>
+					<radios v-model="inputtext4" name="test" value="2"></radios>
+					<radios v-model="inputtext4b" name="test2" value="1"></radios>
+					<radios v-model="inputtext4b" name="test2" value="2"></radios>
+					<!-- checkbox 原则：因为不是v-model，所以要修改，然后发射，传出来 -->
+					<checks :check="list[0]" :keys="0" @valuechange="checkedget"></checks>
+					<checks :check="list[1]" :keys="1" @valuechange="checkedget"></checks>
+					是否全选：
+					<checks :check="inputtext3b" iffull="true" @allchange="checkedall"></checks>
+					<!-- input -->
+					<inputs v-model="inputtext"></inputs>
+					<inputs v-model="inputtext2"></inputs>
+					<!-- 波纹按钮 -->
+					<bowenbtns @btnclick='btnclick'>
+						{{inputtext||'null'}}
+						<!-- vue3 <template v-slot:btncont="scope">111{{scope.property}}</template> -->
+						<!-- vue2写法 <template slot="btncont" slot-scope="scope">111{{scope.property}}</template> -->
+					</bowenbtns>
+					<bowenbtns @btnclick='btnclick'>{{inputtext2||'null'}}</bowenbtns>
+					<bowenbtns @btnclick='btnclick'>{{list[0]||'null'}}</bowenbtns>
+					<bowenbtns @btnclick='btnclick'>{{list[1]||'null'}}</bowenbtns>
+					<bowenbtns @btnclick='btnclick'>{{inputtext3b||'null'}}</bowenbtns>
+					<bowenbtns @btnclick='btnclick'>{{inputtext4||'null'}}</bowenbtns>
+				</div>
+			</template>
+		</div>
+		<script src="./static/common/vue3.js" type="text/javascript" charset="utf-8"></script>
+		<!--  -->
+		<script src="./static/coms/bowenbtn.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/coms/input.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/coms/radios.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/coms/checkbox.js" type="text/javascript" charset="utf-8"></script>
+		<!-- // -->
+		<script src="./static/coms/apps.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var app = Vue.createApp(apps).mount('#app')
+		</script>
+	</body>
+</html>

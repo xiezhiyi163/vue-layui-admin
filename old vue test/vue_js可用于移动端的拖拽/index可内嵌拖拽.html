@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				outline: 0;
+				border: 0;
+				text-decoration: none !important;
+				list-style: none;
+				appearance: none;
+				-webkit-appearance: none;
+			}
+
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+				appearance: none;
+			}
+
+			input[type="number"] {
+				appearance: textfield;
+			}
+
+			button {
+				border-radius: 0;
+			}
+
+			/* html */
+			.wraps {
+				position: relative;
+				padding: 60px 0 0 0;
+			}
+
+			.h1 {
+				position: absolute;
+				top: 0;
+				width: 30px;
+			}
+
+			/* vue */
+			.sub1 {
+				padding-left: 10px;
+				min-height: 4px;
+			}
+			.nav {
+				border-bottom: 1px solid coral;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- html测试 -->
+		<div id="nestedDemo" class="list-group col nested-sortable" style="width: 150px;float: left;">
+			<div class="list-group-item" data-id="1">Titel 1</div>
+			<div class="list-group-item" data-id="2">Titel 2</div>
+			<div class="list-group-item" data-id="3">
+				<h1>Titel3</h1>
+				<div class="list-group nested-sortable">
+					<div class="list-group-item" data-id="4">Titel 4</div>
+					<div class="list-group-item" data-id="5">Titel 5</div>
+					<div class="list-group-item" data-id="6">Titel 6</div>
+				</div>
+			</div>
+			<div class="list-group-item" data-id="7">Titel 7</div>
+			<div class="list-group-item" data-id="8">Titel 8</div>
+			<div class="list-group-item" data-id="9">Titel 9</div>
+			<div class="list-group-item" data-id="10">
+				<h1>Titel10</h1>
+				<div class="list-group nested-sortable">
+					<div class="list-group-item" data-id="11">Titel 11</div>
+					<div class="list-group-item" data-id="12">Titel 12</div>
+				</div>
+			</div>
+		</div>
+		<!-- vue -->
+		<div id="app" style="width: 150px;float: left;">
+			<div id="navs" class="nested2-sortable">
+				<div class="nav" v-for="(v,i) in draglist" :data-id="v.id">
+					<div class="nav" v-if="v.list.length!=0">{{v.v}}</div>
+					<div v-else>{{v.v}}</div>
+					<div class="sub1 nested2-sortable" :id="'type_'+v.id">
+						<div v-for="(v1,i1) in v.list" :data-id="v1.id">
+							<div class="nav" v-if="v1.list.length!=0">{{v1.v}}</div>
+							<div v-else>{{v1.v}}</div>
+							<div class="sub1 nested2-sortable" :id="'type2_'+v.id">
+								<div class="nav" v-for="(v2,i2) in v1.list" :data-id="v2.id">
+									<div class="nav" v-if="v2.list.length!=0">{{v2.v}}</div>
+									<div v-else>{{v2.v}}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<button type="button" @click="getlist">获取</button>
+		</div>
+		<script src="static/Ext/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/Ext/Sortable.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			//{html}
+			//*Sortable
+			var nestedSortables = [].slice.call(document.querySelectorAll('.nested-sortable')),
+				sortables = [];
+
+			// Loop through each nested sortable element
+			for (var i = 0; i < nestedSortables.length; i++) {
+				sortables[i] = new Sortable(nestedSortables[i], {
+					group: 'nested',
+					animation: 150,
+					fallbackOnBody: true,
+					swapThreshold: 0.65,
+					forceFallback: false, //防止火狐拖出来会打开新窗口
+				});
+			};
+			//{vue}
+			var datas = {
+					level:0,//控制能往下选的层级数
+					list: [ //后台数据(有修改的话不要直接在渲染视图那里删除，得要事件模拟然后操作这里的数据，再重新清空下面的数组重新追加并重新渲染)
+						{
+							v: '1a',
+							id: '1',
+							list: [],
+							tid: '-1'
+						},
+						{
+							v: '2a',
+							id: '2',
+							list: [],
+							tid: '-1'
+						},
+						{
+							v: '3a',
+							id: '3',
+							list: [],
+							tid: '-1'
+						},
+						{
+							v: '4a',
+							id: '4',
+							list: [],
+							tid: '3'
+						},
+						{
+							v: '5a',
+							id: '5',
+							list: [],
+							tid: '3'
+						},
+						{
+							v: '6a',
+							id: '6',
+							list: [],
+							tid: '4'
+						},
+						{
+							v: '7a',
+							id: '7',
+							list: [],
+							tid: '-1'
+						},
+						{
+							v: '8a',
+							id: '8',
+							list: [],
+							tid: '-1'
+						}
+					],
+					draglist: [] //处理并渲染,数据有添加或删除,就重新处理并渲染				
+				},
+				methods_ = {
+					draglist_: function($vue) { //导航栏左侧模拟拖动,拖动结束后更改样式
+						$vue.draglist = []
+						//层级1
+						for (var i = 0; i < $vue.list.length; i++) {
+							if ($vue.list[i].tid == '-1') {
+								$vue.draglist.push({
+									v: $vue.list[i].v,
+									id: $vue.list[i].id,
+									list: $vue.list[i].list
+								})
+							}
+						}
+						//层级2
+						var tid = 0;
+						var hassetlist = []
+						for (var i = 0; i < $vue.draglist.length; i++) {
+							tid = $vue.draglist[i].id //保存层级1
+							$vue.draglist[i].list = []//清空处理
+							for (var k = 0; k < $vue.list.length; k++) {
+								if ($vue.list[k].tid == tid) { //对比,相同的话就放进来
+									if (hassetlist.indexOf($vue.list[k].id) == -1) {
+										console.log(100)
+										hassetlist.push($vue.list[k].id)
+										$vue.draglist[i].list.push({
+											v: $vue.list[k].v,
+											id: $vue.list[k].id,
+											list: $vue.list[k].list
+										})
+										for (var m = 0; m < $vue.list.length; m++) { //查找全部数据有没有与层级2相同的
+											if ($vue.list[k].id == $vue.list[m].tid && hassetlist.indexOf($vue.list[m].id) == -1) {
+												listsub($vue.draglist[i].list); //有相同就把层级1对应的list放进去循环
+												continue;
+											}
+										}
+									}
+								}
+							}
+						}
+						console.log($vue.draglist)
+						//层级3
+						function listsub(list) {
+							var tid2 = 0
+							var hassetlist2 = []
+							for (var i = 0; i < list.length; i++) {
+								tid2 = list[i].id //保存层级2
+								list[i].list = []//清空处理
+								for (var k = 0; k < $vue.list.length; k++) {
+									if ($vue.list[k].tid == tid2) { //对比,相同的话就放进来
+										if (hassetlist2.indexOf($vue.list[k].id) == -1) {
+											hassetlist2.push($vue.list[k].id)
+											list[i].list.push({
+												v: $vue.list[k].v,
+												id: $vue.list[k].id,
+												list: $vue.list[k].list
+											})
+										}
+									}
+								}
+							}
+						}
+						//如果是html还要先清空dom写入完再渲染拖拽
+						setTimeout(function() {
+							//开始渲染
+							//*Sortable
+							var nestedSortables2 = [].slice.call(document.querySelectorAll('.nested2-sortable')),
+								sortables2 = [];
+
+							// Loop through each nested sortable element
+							for (var i = 0; i < nestedSortables2.length; i++) {
+								sortables2[i] = new Sortable(nestedSortables2[i], {
+									group: 'nesteds',
+									animation: 150,
+									fallbackOnBody: true,
+									swapThreshold: 0.65,
+									forceFallback: false, //防止火狐拖出来会打开新窗口
+								});
+							};
+						}, 0)
+					},
+					additem: function() {//模拟追加
+						var $vue = this
+						setTimeout(function() {							
+							$vue.list = $vue.getlist('get')//追加前先拿到改变后的
+							$vue.list.push({
+								v: '9a',
+								id: '',
+								list: [],
+								tid: '4'
+							})
+							$vue.draglist_($vue)
+						}, 5000)
+					},
+					getlist: function(type) {
+						var $vue = this;
+						var list = []
+						var t = document.querySelectorAll('.nested2-sortable')
+
+						function listindexOf(id) {
+							for (var k = 0; k < $vue.list.length; k++) {
+								if ($vue.list[k].id == id) {
+									return k
+								}
+							}
+						}
+						var parentid = -1
+						for (var i = 0; i < t.length; i++) {
+							if (t[i].children.length != 0) { //获取子元素
+								for (var k = 0; k < t[i].children.length; k++) {
+									if (i == 0) {
+										parentid = -1
+									} else {
+										parentid = t[i].parentElement.dataset.id
+									}
+									var ind = listindexOf(t[i].children[k].dataset.id)
+									list.push({
+										v: $vue.list[ind].v,
+										id: $vue.list[ind].id,
+										list: [],
+										tid: '' + parentid + ''
+									})
+								}
+							}
+						}
+						if(type == 'get'){return list}
+					}
+				},
+				vue = new Vue({
+					el: '#app',
+					data: datas,
+					methods: methods_,
+					mounted() {
+						this.draglist_(this)
+						this.additem()
+					}
+				})
+		</script>
+	</body>
+</html>

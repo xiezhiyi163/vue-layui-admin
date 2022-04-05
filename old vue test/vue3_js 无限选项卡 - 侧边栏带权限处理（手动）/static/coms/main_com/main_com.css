@@ -1,0 +1,28 @@
+@charset "utf-8";
+
+.top{
+	height: 60px;
+	background-color: #333;
+}
+
+.left {
+	position: fixed;
+	left: 0;
+	top: 0;
+	height: 100vh;
+	width: 230px;
+	background-color: #666;
+}
+
+.left .item {
+	padding: 19px 20px;
+	text-align: center;
+	word-break: break-all;
+	color: white;
+	border-bottom: 1px solid #333;
+	cursor: pointer;
+}
+
+.testwrap {
+	margin:0 0 0 230px;
+}

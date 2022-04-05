@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>*{margin:0;padding: 0;}
+			.container {
+				width: 600px;
+				height: 600px;
+				border: 1px solid;
+				display: flex;
+				flex-wrap: wrap;
+				margin: 100px auto;
+			}
+	
+			.block {
+				width: 33.33%;
+				height: 33.33%;
+				outline: 1px solid black;
+				text-align: center;
+				line-height: 200px;
+				font-size: 26px;
+			}
+	
+			.block5 {
+				background-color: skyblue;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="container">
+				<div class="block1 block">小米笔记本</div>
+				<div class="block2 block">iPhoneX</div>
+				<div class="block3 block">PS4游戏机</div>
+				<div class="block4 block">谢谢参与</div>
+				<div class="block5 block" @click="start">开始抽奖</div>
+				<div class="block6 block">索尼电视机</div>
+				<div class="block7 block">西门子冰箱</div>
+				<div class="block8 block">老板抽油烟机</div>
+				<div class="block9 block">空气净化机</div>
+			</div>
+		</div>
+		<script src="./static/common/vue3.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			Vue.createApp({
+				data(){
+					return{
+						blocks :document.getElementsByClassName("block"),
+						arr :[0, 1, 2, 5, 8, 7, 6, 3],
+						ind:0,
+						count:0,
+						stopTimer:null,
+						rand:0,
+						canclick:1,
+					}
+				},
+				methods:{
+					around : function() {
+						// 将其他盒子都变为白色
+						for (let j = 0; j < this.arr.length; j++) {
+							this.blocks[this.arr[j]].style.background = "white";
+						}
+						// 这里blocks的取值为 blocks[0] blocks[1] blocks[2] blocks[5] blocks[8] blocks[7] blocks[6] blocks[3]
+						// 将当前arr[i]值所对应的盒子修改为粉色
+						this.blocks[this.arr[this.ind]].style.background = "pink";
+						this.ind++; 
+						// 重制i的值
+						if (this.ind === this.arr.length) {
+							this.ind = 0;
+						}
+						this.count++; // count是一个计数器 根据count的值来调整速度
+						// 下面的4个if根据count的值来关闭计时器和重启计时器 改变计时器的时间间隔
+						if (this.count === 5 || this.count === 45) {
+							clearInterval(this.stopTimer);
+							this.stopTimer = setInterval(this.around, 200);
+						}
+						if (this.count === 10 || this.count === 35) {
+							clearInterval(this.stopTimer);
+							this.stopTimer = setInterval(this.around, 100);
+						}
+						if (this.count === 15) {
+							clearInterval(this.stopTimer);
+							this.stopTimer = setInterval(this.around, 50);
+						}
+						// 当等于上面的随机数时，停止计时器
+						if (this.count === this.rand) {
+							clearInterval(this.stopTimer);
+							this.count = 0
+							this.ind = 0
+							this.canclick = 1
+						}
+					},
+					start: function() {
+						if(this.canclick == 0) return;
+						this.rand = Math.floor(Math.random() * 1.001 + 56)//56为当前谢谢参与的位置，然后可以往后推或往前推算多少个
+						this.stopTimer = setInterval(this.around, 300);
+						this.canclick = 0
+					}
+				},
+				mounted() {
+					
+				}
+			}).mount('#app')
+		</script>
+	</body>
+</html>

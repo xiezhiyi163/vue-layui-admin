@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- 样式：：css -->
+		<link rel="stylesheet" href="./static/common/layui/css/layui.css">
+		<!-- // -->
+		<link rel="stylesheet" type="text/css" href="./static/css/index.css"/>
+		<link rel="stylesheet" type="text/css" href="./static/coms/main_com/main.css"/>
+		<link rel="stylesheet" type="text/css" href="./static/coms/player_com/player.css"/>
+	</head>
+	<body>
+		<!-- 元素：：html -->
+		<div id="app">
+			<main_com></main_com>
+		</div>
+		<!-- template -->
+		<div style="position: relative;overflow: hidden;height: 0;">
+			<template id="main_com">
+				<div class="main_wrap">
+					<!-- 需要用到layui插件 -->
+					<player_com v-if="src" :src="src"></player_com>
+				</div>
+			</template>
+			<template id="player_com">
+				<div>
+					<div class="player_wrap">
+						<!-- audio -->
+						<div class="player-base">
+							<audio :src="src" :id="id+'_player'" @canplaythrough="canplay()" @timeupdate="timeupdate()" @ended="toend()"></audio>
+						</div>
+						<!-- 圆环进度条区域 -->
+						<div class="player-circle-container" @mousemove="barmoveing()" @mouseup="barmoveend()">
+						  <div class="player-circle">
+							  <!-- 圆环已播放展示 -->
+							  <svg width="100%" height="100%" style="transform: rotateZ(-90deg);position: relative;z-index: 2;" version="1.1" xmlns="http://www.w3.org/2000/svg">
+								  <!-- stroke-dasharray：边框长度和圆的周长 -->
+								  <circle cx="100" cy="100" r="99" stroke="#ff701d"
+								  stroke-width="2" fill="none" :stroke-dasharray="circleuselength+','+circlealllength"/>
+							  </svg>
+							  <!-- 圆环总长度展示 -->
+							  <div class="player-alllength"></div>
+							  <!-- 封面图 -->
+							  <div class="player-poster"></div>
+						  </div>
+						  <div class="player-circle-bar" @mousedown="barmovestart()"></div>
+						  <!-- - -->
+						  <div class="player-hiddencirclebase" id="player-hiddencirclebase">
+							  <div class="player-circle-bar2" id="player-circle-bar2"></div>
+						  </div>
+						</div>
+						<!-- 时间显示区域 -->
+						<div class="player-time">
+							{{bcurrentTime+' / '+balltime}}
+						</div>
+						<!-- 按钮区域 -->
+						<div class="player-btn-wrap">
+							<div class="player-btn-item" v-show="ifshowplay" @click="toplay()">
+								<img src="./static/img/icon/player-play.png" alt="">
+							</div>
+							<div class="player-btn-item" v-show="ifshowplay == 0" @click="topause()">
+								<img src="./static/img/icon/player-pause.png" alt="">
+							</div>
+						</div>
+						<!-- 音量控制 -->
+						<div class="player-voicewrap">
+							<div id="player-voiceset"></div>
+						</div>
+					</div>
+				</div>
+			</template>
+		</div>
+		<!-- 脚本：：js -->
+		<!-- plugins -->
+		<script src="./static/common/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<!-- common -->
+		<script src="./static/js/common.js" type="text/javascript" charset="utf-8"></script>
+		<!-- cli -->
+		<script src="./static/common/vue3.js" type="text/javascript" charset="utf-8"></script>
+		<!-- coms -->
+		<script src="./static/coms/player_com/player.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/coms/main_com/main.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			Vue.createApp({
+				components:{
+					main_com,
+				}
+			}).mount('#app')
+		</script>
+	</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				outline: 0;
+				border: 0;
+				text-decoration: none !important;
+				list-style: none;
+				appearance:none;
+				-webkit-appearance:none;
+			}
+			
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+				appearance: none;
+			}
+			
+			input[type="number"] {
+				appearance: textfield;
+			}
+			
+			button {
+				border-radius: 0;
+			}
+			/*  */
+			.dragwrap:after{
+				display: block;
+				content:'';
+				clear: both;
+			}
+			.list{
+				float: left;
+				width: 33.333%;
+				min-height: 60px;
+			}
+			.list>div{
+				margin-top: 10px;
+				margin-right: 10px;
+				height: 60px;
+				background-color: coral;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="dragwrap">
+				<div id="list1" class="list">
+					<div v-for="v in list1">{{v.v}}</div>
+				</div>
+				<div id="list2" class="list">
+					<div v-for="v in list2">{{v.v}}</div>
+				</div>
+			</div>
+			<div class="dragwrap"><!-- 对比用 -->				
+				<div id="list10" class="list">
+					<div v-for="v in list1">{{v.v}}</div>
+				</div>
+				<div id="list20" class="list">
+					<div v-for="v in list2">{{v.v}}</div>
+				</div>
+			</div>
+			{{list1}}{{list2}}
+		</div>
+		<script src="static/Ext/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/Ext/Sortable.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var datas = {
+				list1:[
+					{v:'1a'},
+					{v:'2a'},
+					{v:'3a'}
+				],
+				list2:[
+					{v:'1b'},
+					{v:'2b'},
+					{v:'3b'}
+				]
+			},
+			methods_ = {
+				draglist:function(){
+					var $vue = this;
+					Sortable.create(document.getElementById('list1'),{
+						group:'list',
+						animation:200,
+						forceFallback:false,//防止火狐拖出来会打开新窗口
+						onUpdate: function (evt) {  //拖拽结束发生该事件
+							$vue.list1.splice(evt.newIndex, 0, $vue.list1.splice(evt.oldIndex, 1)[0]);
+							var newArray = $vue.list1.slice(0);
+							$vue.list1 = [];
+							$vue.$nextTick(function(){
+								$vue.list1 = newArray;
+							})				
+						},
+						onAdd:function(evt){
+							var types = {'list1':$vue.list1,'list2':$vue.list2},//属性即元素id
+								type = types[evt.from.id],
+								a1 = $vue.list1.slice(0,evt.newIndex),
+								a2 = $vue.list1.slice(evt.newIndex,$vue.list1.length),
+								a0 = [type[evt.oldIndex]];
+							$vue.$nextTick(function(){
+								var t = a1.length==0?a0.concat(a2):(a2.length==0?a1.concat(a0):a1.concat(a0).concat(a2))
+								$vue.list1 = t
+							})
+						},
+						onRemove:function(evt){
+							$vue.list1.splice(evt.newIndex, 0, $vue.list1.splice(evt.oldIndex, 1)[0]);
+							var newArray = $vue.list1.slice(0);
+							$vue.list1 = [];
+							$vue.$nextTick(function(){
+								$vue.list1 = newArray;
+								$vue.list1.splice(evt.oldIndex,1)
+							})	
+						}
+					});
+					Sortable.create(document.getElementById('list2'),{
+						group:'list',
+						animation:200,
+						forceFallback:false,//防止火狐拖出来会打开新窗口
+						onUpdate: function (evt) {  //拖拽结束发生该事件
+							$vue.list2.splice(evt.newIndex, 0, $vue.list2.splice(evt.oldIndex, 1)[0]);
+							var newArray = $vue.list2.slice(0);
+							$vue.list2 = [];
+							$vue.$nextTick(function(){
+								$vue.list2 = newArray;
+							})						
+						},
+						onAdd:function(evt){
+							var types = {'list1':$vue.list1,'list2':$vue.list2},
+								type = types[evt.from.id],
+								a1 = $vue.list2.slice(0,evt.newIndex),
+								a2 = $vue.list2.slice(evt.newIndex,$vue.list1.length),
+								a0 = [type[evt.oldIndex]];
+							$vue.$nextTick(function(){
+								var t = a1.length==0?a0.concat(a2):(a2.length==0?a1.concat(a0):a1.concat(a0).concat(a2))
+								$vue.list2 = t
+							})
+						},
+						onRemove:function(evt){
+							$vue.list2.splice(evt.newIndex, 0, $vue.list2.splice(evt.oldIndex, 1)[0]);
+							var newArray = $vue.list2.slice(0);
+							$vue.list2 = [];
+							$vue.$nextTick(function(){
+								$vue.list2 = newArray;
+								$vue.list2.splice(evt.oldIndex,1)
+							})	
+						}
+					})
+				}
+			},
+			vue = new Vue({
+				el:'#app',
+				data:datas,
+				methods:methods_,
+				mounted() {
+					this.draglist()
+				}
+			})
+		</script>
+	</body>
+</html>

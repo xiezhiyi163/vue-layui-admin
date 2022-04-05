@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>*{margin:0;padding:0}</style>
+	</head>
+	<body>
+		<div id="app">
+			<div>vue嵌套导航</div>
+			<div v-for="(v,i) in rtr" @click="show = !show">
+				{{v.name}}
+				<div v-if="show">
+					<subs v-if="v.children" :subarr="v.children"></subs>
+				</div>
+			</div>
+		</div>
+		<template id="subs">
+			<div>
+				<div v-for="(v,i) in subarr" @click.stop="show = !show" style="padding-left: 20px;">
+					{{v.name}}
+					<div v-if="show">
+						<thesubs v-if="v.children" :subarr="v.children"></thesubs>
+					</div>
+				</div>
+			</div>
+		</template>
+		<script src="./static/common/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var subs = {
+				name:'thesubs',
+				template:'#subs',
+				props:['subarr'],
+				data(){
+					return{
+						show:true,
+					}
+				}
+			}
+		</script>
+		<script type="text/javascript">
+			new Vue({
+				el:'#app',
+				data:{
+					show:true,
+					rtr:[
+						{
+							name:1,
+							children:[
+								{
+									name:2,
+									children:[
+										{
+											name:3,
+										}
+									],
+								}
+							],
+						},
+						{
+							name:1,
+						},
+					]
+				},
+				components:{
+					subs,
+				}
+			})
+		</script>
+	</body>
+</html>

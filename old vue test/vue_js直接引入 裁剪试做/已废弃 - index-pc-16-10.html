@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="static/css/index.css"/>
+	</head>
+	<body>
+		<div id="app">
+			<!-- //图片裁剪V1_0，支持ie9或以上 -->
+			<div>
+				<div id="showclip" style="display: none;">
+					<div id="photowrap">
+						<div class="photowrap_blackalpha"></div>
+						<img id="photobase" src="" >
+						<img id="photobase2" src="" >
+						<div id="clipbox">
+							<span class="resizebutton r_rb" id="r_rb"></span>
+							<div style="height: 100%;width: 100%;position: relative;z-index: 1;background-color: #fff;opacity: 0;"></div>
+						</div>
+					</div>
+					<canvas id="lastphotoview"></canvas>					
+				</div>
+				<div style="overflow: hidden;position: relative;width: 0;height: 0;">
+					<img id="photoView" src="" >
+				</div>
+			</div>
+		</div>
+		<script src="static/Ext/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/js/index.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+</html>

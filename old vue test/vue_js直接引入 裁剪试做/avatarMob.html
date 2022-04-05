@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+		<title></title>
+	</head>
+	<body>
+		<div id="app">
+			<img :src="base64" />
+			<input type="file" name="file" accept="image/*" @change="uploadImg" />
+		</div>
+		<script src="static/Ext/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/Ext/clipic.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			vue = new Vue({
+				el:'#app',
+				data:{
+					 base64: '',
+					 initclipic:new Clipic()
+				},
+				methods:{
+					uploadImg(event) {
+						const files = event.files||event.target.files
+						const reader = new FileReader()
+						reader.readAsDataURL(files[0])
+						reader.onload = img => {
+						  this.initclipic.getImage({
+							width: 500,
+							height: 500,
+							src: img.target.result,
+							onDone: base64 => {
+							  this.base64 = base64
+							}
+						  })
+						}
+						event.value = ''
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

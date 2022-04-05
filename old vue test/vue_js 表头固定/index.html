@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>*{margin: 0;padding: 0;}
+			.table {
+				width: 100%;
+			}
+			th,td {
+				border: 1px solid #000;
+				min-height: 20px !important;
+			}
+			th {
+				height: 50px !important;
+			}
+			.tablewrap {
+				position: relative;
+				height: 400px;
+				overflow: auto;
+			}
+			.fixheader,
+			.fixleft {
+				position: absolute;
+				top: 0;
+				left: 0;
+				background-color: white;
+			}
+			.fixheader {
+				width: 100%;
+				z-index: 1;
+			}
+			.fixheader th {
+				min-width: 200px;
+			}
+			.fixleft {
+				z-index: 2;
+			}
+			td {
+				min-width: 200px;
+				padding: 10px 0;
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="tablewrap" id="tablewrap">
+				<!-- fixheader -->
+				<table class="fixheader" border="1" cellspacing="0" :style="{top:fixheadertopdis+'px',left:fixheaderleftdis+'px'}" style="z-index: 3;width: auto;">
+					<thead>
+						<tr>
+							<th class="fixheaderwidth_0">
+								序号
+							</th>
+						</tr>
+					</thead>
+				</table>
+				<table class="fixheader" border="1" cellspacing="0" :style="{top:fixheadertopdis+'px'}">
+					<thead>
+						<tr>
+							<th class="fixheaderwidth">
+								序号
+							</th>
+							<th class="fixheaderwidth">
+								类别二
+							</th>
+							<th class="fixheaderwidth">
+								类别三
+							</th>
+							<th class="fixheaderwidth">
+								类别四
+							</th>
+							<th class="fixheaderwidth">
+								类别五
+							</th>
+						</tr>
+					</thead>
+				</table>
+				<!-- fixleft -->
+				<table class="fixleft" :style="{left:fixheaderleftdis+'px'}" border="1" cellspacing="0">
+					<tbody>
+						<tr>
+							<th>
+								序号
+							</th>
+						</tr>
+						<tr v-for="(v,i) in 20">
+							<td class="fixleftnum">{{i+1}}</td>
+						</tr>
+					</tbody>
+				</table>
+				<!-- 内容 -->
+				<table class="table" border="1" cellspacing="0" style="position: relative;">
+					<thead>
+						<tr>
+							<th>
+								序号
+							</th>
+							<th>
+								类别二
+							</th>
+							<th>
+								类别三
+							</th>
+							<th>
+								类别四
+							</th>
+							<th>
+								类别五
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(v,i) in 20">
+							<td :class="'firsttd_'+i" class="firsttd">{{i+1}}</td>
+							<td :class="'firsttd_'+i" style="min-width:260px">六十</td>
+							<td :class="'firsttd_'+i">七十</td>
+							<td :class="'firsttd_'+i">八十</td>
+							<td :class="'firsttd_'+i">九十</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<script src="./static/common/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			new Vue({
+				el:'#app',
+				data:{
+					fixheadertopdis:'',
+					fixheaderleftdis:'',
+					fixheaderheights:''
+				},
+				methods:{
+					setdoms:function(){
+						for(var i=0;i<document.querySelectorAll('.firsttd').length;i++){
+							document.querySelectorAll('.fixleftnum')[i].style.minHeight = (document.querySelectorAll('.firsttd')[i].offsetHeight - 20) + 'px'
+							document.querySelectorAll('.fixleftnum')[i].style.minWidth = (document.querySelectorAll('.firsttd')[i].offsetWidth - 2) + 'px'
+						}
+						for(var i=0;i<document.querySelectorAll('.firsttd_0').length;i++){
+							document.querySelectorAll('.fixheaderwidth_0')[0].style.minWidth = (document.querySelectorAll('.firsttd_0')[0].offsetWidth - 2) + 'px'
+							document.querySelectorAll('.fixheaderwidth')[i].style.minWidth = (document.querySelectorAll('.firsttd_0')[i].offsetWidth - 2) + 'px'
+						}
+						document.querySelectorAll('.fixheaderwidth_0')[0].style.minHeight = (document.querySelectorAll('.fixheader')[1].offsetHeight - 2) + 'px'
+						var _this = this
+						setTimeout(function(){
+							_this.setdoms()
+						},50)
+					},
+					scroll:function(){
+						var _this = this
+						document.getElementById('tablewrap').addEventListener('scroll',function(){
+							_this.fixheadertopdis = this.scrollTop
+							_this.fixheaderleftdis = this.scrollLeft
+						})
+					}
+				},
+				mounted:function() {
+					this.scroll()
+					this.setdoms()
+				}
+			})
+		</script>
+	</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>*{margin: 0;padding: 0;}
+			#wrap {
+				background-color: #a6680b;
+				user-select: none;
+			}
+			#box {
+				position: absolute;
+				background-color: #0088FF;
+			}
+			#rb_resize,#rt_resize,#lt_resize,#lb_resize {
+				position: absolute;
+				background-color: #00BFFF;
+				width: 20px;
+				height: 20px;
+			}
+			#rb_resize {
+				right: -10px;
+				bottom: -10px;
+			}
+			#rt_resize {
+				right: -10px;
+				top: -10px;
+			}
+			#lt_resize {
+				left: -10px;
+				top: -10px;
+			}
+			#lb_resize {
+				left: -10px;
+				bottom: -10px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div id="wrap" :style="{width:winwidth + 'px',height:winheight + 'px'}" @mousedown="resizebox_downmouse" @mousemove="resizebox_downmove" @mouseup="resizebox_downend">
+				<div id="box" :style="{top:boxsize.top + 'px',left:boxsize.left + 'px',width:boxsize.width + 'px',height:boxsize.height + 'px'}">
+					<div id="lt_resize" data-id="lt_resize"></div>
+					<div id="rb_resize" data-id="rb_resize"></div>
+					<div id="rt_resize" data-id="rt_resize"></div>
+					<div id="lb_resize" data-id="lb_resize"></div>
+				</div>
+			</div>
+		</div>
+		<script src="./static/common/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var vue = new Vue({
+				el:'#app',
+				data:{
+					winheight:'',
+					winwidth:'',
+					moveflag:0,
+					//box宽度检测（当有固定移动范围的时候要用到）
+					detection_dom:{w:'',h:''},
+					//记录正在移动哪个点
+					resizechoose:'',
+					//记录改变前的dom
+					beforeboxsize:{
+						top:0,left:0,width:0,height:0
+					},
+					//盒子当前dom
+					boxsize:{
+						top:100,left:100,width:300,height:300
+					},
+					//坐标
+					r_xy:{
+						x:0,
+						y:0,
+					},
+					//正在操作的宽高写入
+					thewidth:0,
+					theheight:0
+				},
+				methods:{
+					//操作四个点，直接获取target的data-id，直接设置data
+					resizebox_downmouse:function(e){
+						this.moveflag = 1
+						var ev = event || window.event || e
+						//###核心逻辑###
+						/* 记录当前位置尺寸 */
+						this.beforeboxsize.top = this.boxsize.top
+						this.beforeboxsize.left = this.boxsize.left
+						this.beforeboxsize.width = this.boxsize.width
+						this.beforeboxsize.height = this.boxsize.height
+						//记录起始点
+						this.r_xy.x = ev.clientX
+						this.r_xy.y = ev.clientY
+						//操作哪个点
+						var tar = ev.target || ev.srcElement
+						this.resizechoose = tar.dataset.id
+					},
+					resizebox_downmove:function(e){
+						if(this.moveflag == 0){return;}
+						var ev = event || window.event || e
+						//###核心逻辑###
+						/* 记录移动了多少位置，写入新的尺寸 */
+						var endx = ev.clientX - this.r_xy.x
+						var endy = ev.clientY - this.r_xy.y
+						//操作哪个点
+						if(this.resizechoose == 'rb_resize'){
+							this.boxsize.width = this.beforeboxsize.width + endx < 300 ? 300 : this.beforeboxsize.width + endx
+							this.boxsize.height = this.beforeboxsize.height + endy < 300 ? 300 : this.beforeboxsize.height + endy
+						}
+						if(this.resizechoose == 'rt_resize'){
+							this.thewidth = this.beforeboxsize.width + endx < 300 ? 300 : this.beforeboxsize.width + endx
+							this.theheight = this.beforeboxsize.height - endy < 300 ? 300 : this.beforeboxsize.height - endy
+							//更新顶部距离和尺寸
+							if(this.theheight == 300) {
+								this.boxsize.width = this.thewidth
+								if(this.boxsize.height>300){
+									var temp = this.boxsize.height - 300
+									this.boxsize.height = this.boxsize.height - temp
+									this.boxsize.top = this.boxsize.top + temp
+								}
+								return;
+							}
+							this.boxsize.top = this.beforeboxsize.top + endy
+							this.boxsize.width = this.thewidth
+							this.boxsize.height = this.theheight
+						}
+						if(this.resizechoose == 'lb_resize'){
+							this.thewidth = this.beforeboxsize.width - endx < 300 ? 300 : this.beforeboxsize.width - endx
+							this.theheight = this.beforeboxsize.height + endy < 300 ? 300 : this.beforeboxsize.height + endy
+							//更新顶部距离和尺寸
+							if(this.thewidth == 300) {
+								this.boxsize.height = this.theheight
+								if(this.boxsize.width>300){
+									var temp = this.boxsize.width - 300
+									this.boxsize.width = this.boxsize.width - temp
+									this.boxsize.left = this.boxsize.left + temp
+								}
+								return;
+							}
+							this.boxsize.left = this.beforeboxsize.left + endx
+							this.boxsize.width = this.thewidth
+							this.boxsize.height = this.theheight
+						}
+						if(this.resizechoose == 'lt_resize'){
+							this.thewidth = this.beforeboxsize.width - endx < 300 ? 300 : this.beforeboxsize.width - endx
+							this.theheight = this.beforeboxsize.height - endy < 300 ? 300 : this.beforeboxsize.height - endy
+							//更新顶部和左边的距离和尺寸
+							var flag = 0
+							if(this.theheight == 300) {
+								flag = 1
+								if(this.boxsize.height>300){
+									var temp = this.boxsize.height - 300
+									this.boxsize.height = this.boxsize.height - temp
+									this.boxsize.top = this.boxsize.top + temp
+								}
+							}
+							if(this.thewidth == 300) {
+								flag = 2
+								if(this.boxsize.width>300){
+									var temp = this.boxsize.width - 300
+									this.boxsize.width = this.boxsize.width - temp
+									this.boxsize.left = this.boxsize.left + temp
+								}
+							}
+							if(flag == 2 || flag == 1){
+								if(flag == 2){
+									if(this.theheight != 300){
+										this.boxsize.top = this.beforeboxsize.top + endy
+										this.boxsize.width = this.thewidth
+										this.boxsize.height = this.theheight									
+									}
+								}
+								if(flag == 1){
+									if(this.thewidth != 300){
+										this.boxsize.left = this.beforeboxsize.left + endx
+										this.boxsize.width = this.thewidth
+										this.boxsize.height = this.theheight
+									}
+								}
+								return
+							}
+							this.boxsize.left = this.beforeboxsize.left + endx
+							this.boxsize.top = this.beforeboxsize.top + endy
+							this.boxsize.width = this.thewidth
+							this.boxsize.height = this.theheight
+						}
+					},
+					resizebox_downend:function(e){
+						this.moveflag = 0
+					},
+					//
+					resize:function(){
+						var _this = this
+						this.winheight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+						this.winwidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+						window.addEventListener('resize',function(){
+							_this.winheight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+							_this.winwidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+						})
+					}
+				},
+				mounted(){
+					this.resize()
+				}
+			})
+		</script>
+	</body>
+</html>

@@ -1,0 +1,123 @@
+@charset "utf-8";
+.layui-slider-bar {
+	background-color: #ff701d !important;
+}
+.layui-slider-wrap-btn {
+	border: 2px solid #FF701d !important;
+}
+
+.player_wrap {
+	width: 600px;
+	height: 600px;
+	background-color: #c3c3c3;
+	box-shadow: 15px 15px 10px 0 #eee;
+	border: 1px solid #eee;
+	text-align: center;
+	user-select: none;
+}
+
+.player-base {
+	position: relative;
+	margin-top: 60px;
+	height: 0;
+	overflow: hidden;
+}
+
+
+.player-circle-container {
+	display: inline-block;
+	position: relative;
+}
+
+.player-circle-container .player-circle {
+	position: absolute;
+	z-index: 10;
+	left: 0;
+	top: 0;
+	border-radius: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #ffffff;
+	font-size: 20px;
+	-webkit-user-select: none;
+}
+
+.player-circle-container .player-circle-bar,
+.player-circle-container .player-circle-bar2 {
+	position: absolute;
+	z-index: 20;
+	top: -7px;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	background-color: #e76f51;
+	cursor: pointer;
+	box-shadow: 0 0 1px 1px #777777;
+	cursor: pointer;
+	visibility: hidden;
+}
+.player-circle-container:hover .player-circle-bar {
+	visibility: visible;
+}
+
+.player-alllength {
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	width: 196px;
+	height: 196px;
+	border-radius: 50%;
+	border: 1px solid #eee;
+}
+
+.player-poster {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	width: 180px;
+	height: 180px;
+	background-color: #eee;
+	border-radius: 50%;
+}
+
+.player-hiddencirclebase {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 0;
+	height: 0;
+	transform: rotateZ(0deg);
+	z-index: 15;
+}
+
+.player-circle-container .player-circle-bar2 {
+	left: -7px;
+	transform: rotateZ(0deg);
+}
+
+.player-time {
+	padding: 30px 0;
+	text-align: center;
+}
+
+.player-btn-wrap {
+	margin-top: 0px;
+	text-align: center;
+}
+
+.player-btn-item {
+	display: inline-block;
+	cursor: pointer;
+}
+
+.player-btn-item img {
+	width: 50px;
+	height: 50px;
+}
+
+.player-voicewrap {
+	display: inline-block;
+	margin-top: 50px;
+	width: 300px;
+}

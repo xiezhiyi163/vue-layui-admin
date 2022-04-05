@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>*{margin: 0;padding: 0;}
+			.headwrap {
+				position: relative;
+				padding: 30px 50px;
+				height: 26px;
+				width: 14px;
+				background-color: #007AFF;
+			}
+			.headitem {
+				position: absolute;
+				top: 30px;
+				left: 26px;
+				width: 26px;
+				height: 26px;
+				background-color: white;
+				border: 1px solid #ccc;
+				border-radius: 50%;
+				transition: 1000ms;
+			}
+			.headitemright0 {
+				left: 0px;
+				transform: scale(0);
+			}
+			.headitemright1 {
+				left: 26px;
+			}
+			.headitemright2 {
+				left: 42px;
+			}
+			.headitemright3 {
+				left: 58px;
+			}
+			.headitemright4 {
+				left: 90px;
+				transform: scale(0);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="headwrap">
+				<div class="headitem" :class="{headitemright0:v.showtype==0||v.showtype==-1,headitemright1:v.showtype==1,headitemright2:v.showtype==2,headitemright3:v.showtype==3,headitemright4:v.showtype==4}" v-for="(v,i) in headlistchange" :key="v.id"></div>
+			</div>
+		</div>
+		<script src="./static/common/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			new Vue({
+				el:'#app',
+				data:{
+					headlist:[],
+					headlistchange:[],
+					pushind:5,
+				},
+				methods:{
+					initheadlist:function(l){
+						var res = [1111,2222,3333]
+						/* 拿到数据，重置list */
+						for(var i=0;i<res.length;i++){
+							if(!l){
+								this.headlist.push({id:new Date().getTime()+'_0_'+i,text:res[i]})
+							}else{
+								this.headlist.push({id:new Date().getTime()+'_'+l+'_'+i,text:res[i]})
+							}
+						}
+						if(this.headlist.length<6){
+							if(!l){
+								this.initheadlist(1)
+							}else{
+								var temp = l + 1
+								this.initheadlist(temp)
+							}
+						}else{
+							/* 初始化要使用的list */
+							for(var i=0;i<4;i++){
+								this.headlistchange.push(Object.assign({showtype:i+1},this.headlist[i]))
+							}
+							this.changeheadlist()
+						}
+					},
+					changeheadlist:function(){
+						setTimeout(()=>{
+							for(var i=0;i<this.headlistchange.length;i++){
+								this.headlistchange[i].showtype = this.headlistchange[i].showtype - 1
+							}
+							this.headlistchange.push(Object.assign({showtype:4},this.headlist[this.pushind]))
+							this.pushind = this.pushind + 1
+							if(this.pushind>this.headlist.length-1){
+								this.pushind = 0
+							}
+							setTimeout(()=>{
+								this.headlistchange.splice(0,1)
+								this.changeheadlist()
+							},1000)
+						},4000)
+					}
+				},
+				mounted() {
+					this.initheadlist()
+				}
+			})
+		</script>
+	</body>
+</html>

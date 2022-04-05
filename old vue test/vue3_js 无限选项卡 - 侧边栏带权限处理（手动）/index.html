@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- 样式：：css -->
+		<link rel="stylesheet" type="text/css" href="./static/css/index.css"/>
+		<link rel="stylesheet" type="text/css" href="./static/coms/main_com/main_com.css"/>
+		<link rel="stylesheet" type="text/css" href="./static/coms/tabs_com/tabs_com.css"/>
+	</head>
+	<body>
+		<!-- 元素：：html -->
+		
+		
+		
+		<div id="app">
+			<main_com></main_com>
+		</div>
+		
+		
+		
+		<!-- template -->
+		<div style="position: relative;overflow: hidden;height: 0;">
+			<template id="main_com" MAIN>
+				<div>
+					<div class="top"></div>
+					<div class="left">
+						<div v-for="(v,i) in navlist">
+							<div class="item" v-if="v.show" @click="additem(i)" :style="{backgroundColor:activeid == v.id?'#999':''}">{{v.title||'title'}}</div>
+						</div>
+					</div>
+					<div class="testwrap">
+						<!-- tab切换主要控件 -->
+						
+						
+						<tabs_com :list="list" @delitem="deltablistitem" @itemactive="changeactive" :activeid="activeid" iftocenter="1"></tabs_com>
+						
+						
+						<!-- 模拟<routerView/> -->
+						<div>
+							<pagehome_com v-if="activeid == 0"></pagehome_com>
+							<page1_com v-if="activeid == 1"></page1_com>
+							<page2_com v-if="activeid == 2"></page2_com>
+							<page3_com v-if="activeid == 3"></page3_com>
+							<page4_com v-if="activeid == 4"></page4_com>
+						</div>
+						
+					</div>
+				</div>
+			</template>
+			<template id="tabs_com">
+				<div>
+					<!-- 
+						追加，并激活，并判断是否超出了宽度
+						删除，并判断是否超出了宽度
+						超出宽度可左右切换
+					 -->
+					<div class="tabs_wrap">
+						<!-- left -->
+						<div class="tabs_leftbutton" v-show="showlr" @click="toleft()">{{'<'}}</div>
+						<!-- tabview -->
+						<div class="tabs_subwrap" :style="{left:!showlr?'-20px':''}">
+							<div class="tabs_sliderwrap">
+								<!-- item:active -->
+								<div class="tabs_item" v-for="(v,i) in list" @click="itemactive(i)" :style="{zIndex:list.length-i}">
+									<div class="tabs_itemin" :class="{active:activeid == v.id}">
+										<div class="tabs_close" v-show="!v.notclose" @click.stop="delitem(i)">×</div>
+										<div class="tabs_info" :style="{left:v.notclose?'0':''}">
+											{{v.name||'home'}}
+										</div>
+									</div>
+									<div class="tabs_itemright"></div>
+								</div>
+							</div>
+						</div>
+						<!-- right -->
+						<div class="tabs_rightbutton" v-show="showlr" @click="toright()">{{'>'}}</div>
+					</div>
+				</div>
+			</template>
+		</div>
+		<!-- 脚本：：js -->
+		<script src="./static/common/vue3.js" type="text/javascript" charset="utf-8"></script>
+		<!-- coms -->
+		<script src="./static/coms/tabs_com/tabs_com.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/coms/pagehome_com/pagehome.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/coms/page1_com/page1.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/coms/page2_com/page2.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/coms/page3_com/page3.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/coms/page4_com/page4.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/coms/main_com/main_com.js" type="text/javascript" charset="utf-8"></script>
+		<!-- common -->
+		<script src="./static/common/common.js" type="text/javascript" charset="utf-8"></script>
+		<!-- vue store模拟 -->
+		<script type="text/javascript">
+			var store = {
+				state:{
+					root:['admin']
+				}
+			}
+		</script>
+		<!-- 初始化vue -->
+		<script type="text/javascript">
+			var app = Vue.createApp({
+				components:{
+					main_com
+				}
+			});
+			//以前2版本是Vue.prototype.xxx
+			app.config.globalProperties.$getroot = function(arr){
+				if(arr.constructor.toString().indexOf('Array')!=-1){
+					var flag = 0
+					for(var i=0;i<arr.length;i++){
+						if(store.state.root.join(',').indexOf(arr[i])!=-1){
+							flag = 1
+						}
+					}
+					if(flag == 1){
+						return true
+					}else{
+						return false
+					}
+				}else if(typeof arr == 'string'){
+					if(store.state.root.join(',').indexOf(arr)!=-1){
+						return true
+					}else{
+						return false
+					}
+				}
+			};
+			app.mount('#app')
+		</script>
+	</body>
+</html>

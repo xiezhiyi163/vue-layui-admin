@@ -1,0 +1,86 @@
+@charset "utf-8";
+.tabs_wrap {
+	position: relative;
+	margin-top: -3px;
+	height: 43px;
+	border-bottom: 1px solid #eee;
+	overflow: hidden;
+}
+.tabs_leftbutton,
+.tabs_rightbutton {
+	position: absolute;
+	top: 3px;
+	width: 20px;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	cursor: pointer;
+}
+.tabs_leftbutton {
+	left: 0;
+}
+.tabs_rightbutton {
+	right: 0;
+}
+.tabs_subwrap {
+	position: relative;
+	margin: 0 20px;
+	padding-top: 0px;
+	overflow: hidden;
+}
+.tabs_sliderwrap {
+	position: relative;
+	display: inline-block;
+	white-space: nowrap;
+	font-size: 0;
+}
+.tabs_item {
+	position: relative;
+	display: inline-block;
+	height: 40px;
+	font-size: 16px;
+}
+.tabs_close {
+	position: absolute;
+	top: 10px;
+	right: 5px;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	text-align: center;
+	border-radius: 50%;
+	visibility: hidden;
+}
+.tabs_info {
+	position: relative;
+}
+.tabs_itemin {
+	position: relative;
+	display: inline-block;
+	padding: 0 30px;
+	height: 40px;
+	line-height: 40px;
+	vertical-align: bottom;
+	border: 1px solid #eee;
+	border-bottom: 0;
+	cursor: pointer;
+	background-color: #f5f5f5;
+}
+.tabs_itemin:hover .tabs_close{
+	visibility: visible;
+}
+.tabs_itemin:hover .tabs_info {
+	left: -10px;
+}
+.tabs_item .active {
+	height: 40px;
+	line-height: 40px;
+	/* border-radius: 10px 10px 0 0; */
+	background-color: #fff;
+	color: #0000FF;
+	transition: 300ms;
+}
+.tabs_itemright {
+	display: inline-block;
+	height: 40px;
+}

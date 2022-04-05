@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			*{margin: 0;padding: 0;}
+			.cropcontwrap {
+				width: 600px;
+				padding: 20px;
+				margin: 0 auto;
+			}
+			.cropcont {
+				position: relative;
+				width: 600px;
+				height: 500px;
+				background-color: #ccc;
+			}
+			.cropwrap {
+				position: relative;
+				top: 50%;
+				left: 50%;
+				transform: translateY(-50%) translateX(-50%);
+				display: inline-block;
+			}
+			.cropwrap-shade {
+				position: absolute;
+				background-color: rgba(0,0,0,.5);
+			}
+			.cropwrap-shade.top {
+				top: 0px;
+				left: 0px;
+				width: 100%;
+				height: 0px;
+			}
+			.cropwrap-shade.left {
+				top: 0px;
+				left: 0px;
+				width: 0px;
+				height: 0px;
+			}
+			.cropwrap-shade.right {
+				top: 0;
+				right: 0;
+				width: 0px;
+				height: 0px;
+			}
+			.cropwrap-shade.bottom {
+				bottom: 0px;
+				right: 0px;
+				width: 100%;
+				height: 0px;
+			}
+			.cropbox {
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				width: 50px;
+				height: 50px;
+				z-index: 2;
+			}
+			.cropsizebox {
+				position: absolute;
+				bottom: -5px;
+				right: -5px;
+				width: 10px;
+				height: 10px;
+				background-color: white;
+			}
+			
+			.showcropres {
+				position: absolute;
+				right: 0;
+				top: 10px;
+				width: 150px;
+				height: 150px;
+				background-color: #ccc;
+				border: 1px solid #ccc;
+			}
+			
+			.tips {
+				padding: 20px 20px 0;width: 400px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="cropcontwrap">
+			<div class="cropcont" onmousedown="resizedown()" onmousemove="resizemove()" onmouseup="resizeend()">
+				
+				
+				<div class="cropwrap" id="cropwrap" onmousedown="mousedownev()" onmousemove="mousemoveev()" onmouseup="mouseupev()">
+					<div class="cropbox" id="cropbox">
+						<div class="cropsizebox"></div>
+					</div>
+					<div class="cropwrap-shade top" id="croptop"></div>
+					<div class="cropwrap-shade left" id="cropleft"></div>
+					<div class="cropwrap-shade right" id="cropright"></div>
+					<div class="cropwrap-shade bottom" id="cropbottom"></div>
+					<img id="cropimg" src="./static/img/Eb6G_qCUMAAAYN3.jpg" style="max-width: 600px;max-height: 500px;float: left;">
+					<div style="clear: both;"></div>
+				</div>
+				
+				
+			</div>
+			
+			<div style="position: relative;width: 600px;">
+				
+				
+				<div class="showcropres">
+					<img id="showcropresimg" src="" alt="" width="100%" height="100%">
+				</div>
+				<div style="position: relative;overflow: hidden;height: 0;">
+					<canvas id="showcropresCanvas"></canvas>
+				</div>
+				
+				
+				<div class="tips">请上传宽高比例为0.5和2倍之间的图片且宽高皆不能少于300的图片(jpg,png)</div>
+				<div class="tips"><button onclick="cropboxinit()">重新上传并初始化</button></div>
+				
+				
+				
+			</div>
+		</div>
+		<script type="text/javascript">
+			var data = {
+				moveflag:0,
+				sizemoveflag:0,
+				imgbeforewidth:0,//图片原本宽度
+				imgbeforeheight:0,//图片原本宽度
+				w:50,//盒子最小宽度
+				h:50,//盒子最小高度
+				movex:0,//鼠标或手势按下的初始位置x
+				movey:0,//鼠标或手势按下的初始位置y
+				boxleft:0,//盒子初始的左边距离
+				boxtop:0,//盒子初始的顶部距离
+				boxwidth:0,//盒子初始的宽度
+				boxheight:0,//盒子初始的高度
+				croptimer:0,
+			},
+			_this = data,//data use for this
+			d = document,win = window,//document,window use for d,win
+			
+			
+			
+			methods = {
+				getImgNaturalDimensions: async function(oImg, callback) {
+				　　var nWidth, nHeight;
+				　　if (!oImg.naturalWidth) { // 现代浏览器
+				
+				　　　　nWidth = oImg.naturalWidth;
+				　　　　nHeight = oImg.naturalHeight;
+				　　　　callback({w: nWidth, h:nHeight});
+				
+				　　} else { // IE6/7/8
+				　　　　var nImg = new Image();
+				
+				        nImg.onload = function() {
+							nWidth = nImg.width;
+							nHeight = nImg.height;
+							callback({w: nWidth, h:nHeight});
+				　　　　}
+				　　　　nImg.src = oImg.src;
+				　　};
+					await (function() {
+						return new Promise(function(res,rej) {
+							setTimeout(function() {
+								_this.imgbeforewidth = nWidth;
+								_this.imgbeforeheight = nHeight;
+								res()
+							},0)							
+						})
+					})();
+				},
+				//生成图像
+				setcanvasforimg:function() {
+					var ctx = d.getElementById('showcropresCanvas')
+					//画布宽高，最后的裁剪宽高
+					var ctxwidth = _this.imgbeforewidth/(d.getElementById('cropimg').offsetWidth/d.getElementById('cropbox').offsetWidth)
+					var ctxheight = _this.imgbeforeheight/(d.getElementById('cropimg').offsetHeight/d.getElementById('cropbox').offsetHeight)
+					//最后要开始裁剪的左上基准点处理
+					var lastcropleft = _this.imgbeforewidth/(d.getElementById('cropimg').offsetWidth/d.getElementById('cropleft').offsetWidth)
+					var lastcroptop = _this.imgbeforeheight/(d.getElementById('cropimg').offsetHeight/d.getElementById('croptop').offsetHeight)
+					//
+					ctx.width = Math.ceil(ctxwidth)
+					ctx.height = Math.ceil(ctxheight)
+					ctx2d = ctx.getContext('2d')
+					ctx2d.drawImage(
+						d.getElementById('cropimg'), 
+						lastcropleft, 
+						lastcroptop, 
+						ctxwidth, ctxheight,
+						0, 0, 
+						ctxwidth, ctxheight
+					)
+					d.getElementById('showcropresimg').src =  ctx.toDataURL()
+					//节流
+					if(_this.croptimer != null) {
+						clearTimeout(_this.croptimer)
+					}
+					_this.croptimer = setTimeout(function() {
+						//拿到要提交的base64
+						//ctx.toDataURL()
+					},500)
+				},
+				setfourshade: function() {
+					//domset
+					setTimeout(function() {
+						d.getElementById('croptop').style.height = (d.getElementById('cropbox').style.top.split('px')[0]||0) + 'px'
+						d.getElementById('cropleft').style.width = (d.getElementById('cropbox').style.left.split('px')[0]||0) + 'px'
+						d.getElementById('cropright').style.width = (d.getElementById('cropwrap').offsetWidth - ( d.getElementById('cropbox').offsetWidth + d.getElementById('cropleft').offsetWidth )) + 'px'
+						d.getElementById('cropleft').style.height = d.getElementById('cropbox').offsetHeight + 'px'
+						d.getElementById('cropright').style.height = d.getElementById('cropbox').offsetHeight + 'px'
+						d.getElementById('cropleft').style.top = d.getElementById('croptop').offsetHeight + 'px'
+						d.getElementById('cropright').style.top = d.getElementById('croptop').offsetHeight + 'px'
+						d.getElementById('cropbottom').style.height = d.getElementById('cropwrap').offsetHeight - ( d.getElementById('cropbox').offsetHeight + d.getElementById('croptop').offsetHeight ) + 'px'
+						self.setcanvasforimg()
+					},10)
+				},
+				//改变位置
+				mousedownev: function(e) {
+					var ev = event || win.event || e
+					if(ev.target.className.indexOf('cropsizebox') != -1){
+						return;
+					}
+					if(ev.target.className.indexOf('cropbox') == -1) {
+						return;
+					}
+					_this.moveflag = 1//打开开关
+					//一开始存起来
+					_this.movex = ev.pageX
+					_this.movey = ev.pageY
+					_this.boxleft = d.getElementById('cropleft').offsetWidth
+					_this.boxtop = d.getElementById('croptop').offsetHeight
+				},
+				mousemoveev: function() {
+					if(_this.moveflag == 1) {
+						var ev = event || win.event || e
+						//相减求出差值
+						var endx = ev.pageX - _this.movex,
+							endy = ev.pageY - _this.movey,
+							//最终差值
+							lastendx = 0,
+							lastendy = 0
+							if(Number(_this.boxleft) + endx < 0){
+								lastendx = 0
+							}else if(Number(_this.boxleft) + endx > d.getElementById('cropwrap').offsetWidth - d.getElementById('cropbox').offsetWidth){
+								lastendx = d.getElementById('cropwrap').offsetWidth - d.getElementById('cropbox').offsetWidth
+							}else{
+								lastendx = Number(_this.boxleft) + endx
+							}
+							if(Number(_this.boxtop) + endy < 0){
+								lastendy = 0
+							}else if(Number(_this.boxtop) + endy > d.getElementById('cropwrap').offsetHeight - d.getElementById('cropbox').offsetHeight){
+								lastendy = d.getElementById('cropwrap').offsetHeight - d.getElementById('cropbox').offsetHeight
+							}else{
+								lastendy = Number(_this.boxtop) + endy
+							}
+						//dom set
+						d.getElementById('cropbox').style.left = lastendx + 'px'
+						d.getElementById('cropbox').style.top = lastendy + 'px'
+						self.setfourshade()
+					}
+				},
+				mouseupev: function() {
+					_this.moveflag = 0
+					self.setfourshade()
+				},
+				//改变大小
+				resizedown: function(e) {
+					var ev = event || win.event || e
+					ev.stopPropagation()
+					if(ev.target.className.indexOf('cropsizebox') != -1) {
+						//打开开关
+						_this.sizemoveflag = 1	
+						//一开始存起来
+						_this.movex = ev.pageX
+						_this.movey = ev.pageY
+						_this.boxwidth = d.getElementById('cropbox').offsetWidth
+						_this.boxheight = d.getElementById('cropbox').offsetHeight
+					}
+				},
+				resizemove: function() {
+					var ev = event || win.event || e
+					if(_this.sizemoveflag == 1) {
+						//求差值
+						var endX = ev.pageX - _this.movex,
+							//最终大小
+							lastendwidth = _this.boxwidth + endX,
+							lastendheight = lastendwidth
+							if(Number(lastendwidth) + Number(d.getElementById('cropleft').offsetWidth) > d.getElementById('cropwrap').offsetWidth ){
+								lastendwidth = d.getElementById('cropwrap').offsetWidth - d.getElementById('cropleft').offsetWidth
+								//因为是正方形，所以跟宽是一样的
+								lastendheight = d.getElementById('cropwrap').offsetWidth - d.getElementById('cropleft').offsetWidth
+							}else if(Number(lastendheight) + Number(d.getElementById('croptop').offsetHeight) > d.getElementById('cropwrap').offsetHeight){
+								lastendheight = d.getElementById('cropwrap').offsetHeight - d.getElementById('croptop').offsetHeight
+								lastendwidth = d.getElementById('cropwrap').offsetHeight - d.getElementById('croptop').offsetHeight
+							}
+							d.getElementById('cropbox').style.width = lastendwidth<50?50:lastendwidth + 'px'
+							d.getElementById('cropbox').style.height = lastendwidth<50?50:lastendwidth + 'px'
+							self.setfourshade()
+					}
+				},
+				resizeend: function() {
+					_this.sizemoveflag = 0
+					self.setfourshade()
+				},
+				//初始化大小位置
+				cropboxinit: function() {
+					_this.sizemoveflag = 0
+					d.getElementById('cropbox').style.top = '0px'
+					d.getElementById('cropbox').style.left = '0px'
+					d.getElementById('cropbox').style.width = '50px'
+					d.getElementById('cropbox').style.height = '50px'
+					self.setfourshade()
+				},
+				winload: function() {
+					self.getImgNaturalDimensions(document.getElementById("cropimg"), function(dimensions){
+						if(dimensions.w/dimensions.h < 0.5 || dimensions.w/dimensions.h > 2) {
+							alert('图片尺寸不合适')
+						}else if(dimensions.w<300||dimensions.h<300){
+							alert('图片尺寸不合适')
+						}else{
+							self.setfourshade()
+						}					
+					});
+				}
+				/* --- */
+			},
+			self = methods,//methods use for self			
+			//methods use for props
+			getImgNaturalDimensions = self.getImgNaturalDimensions,
+			setcanvasforimg = self.setcanvasforimg,
+			setfourshade = self.setfourshade,
+			mousedownev = self.mousedownev,
+			mousemoveev = self.mousemoveev,
+			mouseupev = self.mouseupev,
+			resizedown = self.resizedown,
+			resizemove = self.resizemove,
+			resizeend = self.resizeend,
+			cropboxinit = self.cropboxinit,
+			winload = self.winload,
+
+			
+			
+		
+			mounted = (function() {
+				window.onload = self.winload
+			})();				
+			
+			
+			
+			
+			
+			
+		</script>
+	</body>
+</html>

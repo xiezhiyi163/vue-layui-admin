@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+			*{margin:0;padding: 0;}
+		</style>
+		<link rel="stylesheet" href="./static/css/head_com.css">
+		<link rel="stylesheet" type="text/css" href="./static/css/video_com.css"/>
+		<style>
+			.table {
+				display: table;
+				width: 100%;
+			}
+			.cell {
+				display: table-cell;
+				vertical-align: top;
+			}
+			.cell100 {
+				width: 100%;
+			}
+			.conts_wrap {
+				margin: 0 auto;
+				max-width: 1200px;
+			}
+			.video_list {
+				margin-top: 10px;
+			}
+			.videowrap {
+				width: 100%;
+			}
+			.videolist {
+				width: 320px;
+				margin-left: 10px;
+			}
+			.videolisttitle {
+				padding: 20px 0;
+				margin-bottom: 10px;
+				text-align: center;
+				background-color: #313131;
+				color: white;
+			}
+			.videolistcontwrap {
+				position: relative;
+				min-height: 160px;
+				max-height: 250px;
+				background-color: #313131;
+				overflow: hidden auto;
+			}
+			.videolistcontbox {
+				padding-top: 10px;
+			}
+			.videolistcontitem {
+				position: relative;
+				max-width: 300px;
+				margin: 0 10px 10px;
+				color: white;
+				cursor: pointer;
+			}
+			.videolistcontitem .active {
+				color: #F0AD4E;
+			}
+			.videolistcontitem-title {
+				position: relative;
+				margin-right: 40px;
+				height: 20px;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
+			.videolistcontitem img {
+				position: absolute;
+				top: 0px;
+				right: 0px;
+				width: 20px;
+				height: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		
+		
+		
+		<div id="app" FORTHEPOWER_BY="VUE3">
+			<head_com></head_com>
+			<div class="conts_wrap" v-for="(v,i) in getvideo">
+				<div class="video_list table">
+					<div class="cell cell100">
+						<div class="videowrap">
+							<!-- src建议为字符串,playerid的前缀命名格式不要更改 -->
+							<video_com v-if="v.isplaying" :ifshownext="v.ifshowNext" @videofornext="tovideofornext" :src="v.isplaying" CSSLINK="video_com" :playerid="'video_h5_'+v.isplayid" :videoInd="i"></video_com>
+						</div>
+					</div>
+					<div class="cell">
+						<div class="videolist" id="videolist">
+							<div class="videolisttitle">播放列表</div>
+							<div class="videolistcontwrap" id="videolistcontwrap">
+								<div class="videolistcontbox">
+									<!-- videolistcontbox data -->
+									<div class="videolistcontitem" v-for="(vs,ind) in v.videolist" @click="tonowisplay(i,ind)">
+										<div class="videolistcontitem-title" :class="{'active':vs.choose}">
+											{{vs.title}}
+										</div>
+										<img src="./static/img/icon/player-play.png" alt="" v-show="vs.choose">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		<!-- ### .vue 里面的template -->
+		<div style="height: 0;position: relative;overflow: hidden;">
+			<template id="header">
+				<div class="headerwrap">
+					视频控件编写以及和播放列表联动
+				</div>
+			</template>
+			<template id="videoplayer">
+				<div>
+					
+					<div class="videobox" :id="playerid+'_h5video'" @mousemove="entervideomove(plyaerid)" @mouseenter="ifentervideo = 1" @mouseleave="ifentervideo = 0">
+						<video :src="src" style="width: 100%;" :id="playerid+'_thevideo'" @timeupdate="updateprogres(playerid)" @ended="playend(playerid)" @canplaythrough="canplay(playerid)"></video>
+						
+						<div class="controlsbox" :id="playerid+'_controlsbox'" :style="{visibility:controlboxshow?'visible':'hidden'}">
+							
+							<div class="cell play-control" :data-id="playerid" @click="ifshowcolumnewrap = 0,videoforplay(playerid)">
+								<!-- <div class="clickbtn" id="video_h5_0_playbtn" v-show="playbtnshow">播放</div> -->
+								<div class="clickbtn" :id="playerid+'_playbtn'" v-show="playbtnshow">
+									<img src="./static/img/icon/player-play.png" alt="">
+								</div>
+							</div>
+							
+							<div class="cell pause-control" :data-id="playerid" @click="ifshowcolumnewrap = 0,videoforpause(playerid)">
+								<!-- <div class="clickbtn" :id="playerid+'_pausebtn'" v-show="!playbtnshow" style="display: none;">暂停</div> -->
+								<div class="clickbtn" :id="playerid+'_pausebtn'" v-show="!playbtnshow" style="display: none;">
+									<img src="./static/img/icon/player-pause.png" alt="">
+								</div>
+							</div>
+							
+							<div class="cell next-control" :data-id="playerid" @click="ifshowcolumnewrap = 0,videonext()">
+								<!-- <div class="clickbtn" :id="playerid+'_nextbtn" v-show="playbtnshow">下一个</div> -->
+								<div class="clickbtn" :id="playerid+'_nextbtn'" v-show="ifshownext == '1'">
+									<img src="./static/img/icon/player-next.png" alt="">
+								</div>
+							</div>
+							
+							<div class="cell time-control" :data-id="playerid" @click="ifshowcolumnewrap = 0">
+								<div class="clickbtn" :class="{'clickbtnfortime-justminute':justminute?true:false}" :id="playerid+'_timebtn'">{{timesinfo}}</div>
+							</div>
+							
+							<div class="cell progress-control" style="width: 100%;" @click="ifshowcolumnewrap = 0">
+								<div class="progresswrap" @mousedown="videomovestart()" @mousemove="videomoveing()" @mouseup="videomoveend()">
+									<div class="progresswrapin" :id="playerid+'_wrapin'">
+										<div class="progressbox" style="background-color: transparent;width: 100%;">
+											<div class="progressbox" :id="playerid+'_box'" :style="{width:hadplay}"></div>
+										</div>
+										<div class="progressboxhandle" :id="playerid+'_box_handle'" :style="{left:hadplay}" :data-id="playerid"></div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="cell columne-control">
+								<!-- <div class="clickbtn2" @click="ifshowcolumnebox('video_h5_0')">音量</div> -->
+								<div class="clickbtn2" @click="ifshowcolumnebox(playerid)">
+									<img src="./static/img/icon/player-volume.png" alt="">
+								</div>
+								<div class="columnewrap" :id="playerid+'_columnewrap'" v-show="ifshowcolumnewrap" @mousedown="video_columnemovestart()" @mousemove="video_columnemoveing()" @mouseup="video_columnemoveend()">
+									<div class="columnewrapin" :id="playerid+'_columne_wrapin'">
+										<div class="columnebox"></div>
+										<div class="columneboxhandle" :id="playerid+'_columne_handle'" :style="{left:nowvolumehandleleft}" :data-id="playerid"></div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="cell fullscreen-control" :data-id="playerid" @click="ifshowcolumnewrap = 0,fullscreen(playerid)">
+								<!-- <div class="clickbtn2" :id="playerid+'_fullscreenbtn'" v-show="!iffullscreen">全屏</div> -->
+								<div class="clickbtn2" :id="playerid+'_fullscreenbtn'" v-show="!iffullscreen">
+									<img src="./static/img/icon/player-fullscreen.png" alt="">
+								</div>
+							</div>
+							
+							<div class="cell exitfullscreen-control" :data-id="playerid" @click="ifshowcolumnewrap = 0,exitfullscreen(playerid)">
+								<!-- <div class="clickbtn2" :id="playerid+'_exitfullscreenbtn'" v-show="iffullscreen">退出全屏</div> -->
+								<div class="clickbtn2" :id="playerid+'_exitfullscreenbtn'" v-show="iffullscreen">
+									<img src="./static/img/icon/player-exitfullscreen.png" alt="">
+								</div>
+							</div>
+							
+						</div>
+						
+					</div>
+				</div>
+			</template>
+		</div>
+		<!-- 一些组件，插件，公用部分 -->
+		<script src="./static/js/head_com.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/js/video_com.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/common/vue3.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/js/_screenfull.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/js/common.js" type="text/javascript" charset="utf-8"></script>
+		<!-- 初始化vue - 挂载 -->
+		<script src="./static/js/initvue3 - video.js" type="text/javascript"></script>
+	</body>
+</html>

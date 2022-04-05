@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>*{margin:0;padding: 0;}
+			.audiobox {
+				position: relative;
+				width: 50%;
+				min-width: 555px;
+				min-height: 70px;
+				background-color: #000000;
+			}
+			.audiobox:after {
+				content: '';
+				display: block;
+				clear: both;
+			}
+			.audiobox:hover .controlsbox {
+				visibility: visible;
+			}
+			.audiobox audio {
+				float: left;
+			}
+			.controlsbox {
+				display: table;
+				position: absolute;
+				left: 0;
+				bottom: 0;
+				width: 100%;
+				background-color: rgba(0,0,0,.5);
+				visibility: visible !important;
+				user-select: none;
+			}
+			.controlsbox:hover {
+				visibility: visible !important;
+			}
+			.controlsbox .cell {
+				display: table-cell;
+				vertical-align: top;
+				color: #fff;
+			}
+			.clickbtn,
+			.clickbtn2 {
+				min-width: 40px;
+				height: 70px;
+				line-height: 70px;
+				padding: 0 0 0 20px;
+				cursor: pointer;
+				white-space: nowrap;
+			}
+			.clickbtn2 {
+				padding: 0 20px 0 0px;
+			}
+			.time-control .clickbtn {
+				width: 140px;
+				text-align: center;
+			}
+			.time-control .clickbtnfortime-justminute {
+				width: 110px;
+			}
+			.columne-control {
+				position: relative;
+			}
+			.columnewrap {
+				/* display: none; */
+				/* position: absolute;
+				bottom: 70px;
+				left: -60px; */
+				padding: 0 20px 0 0px;
+				width: 110px;
+				/* height: 40px; */
+				/* background-color: rgba(0,0,0,.5); */
+			}
+			.columnewrapin {
+				position: relative;
+				margin: 0 10px;
+			}
+			.columnebox {
+				margin-top: 34px;
+				border-bottom: 2px solid #fff;
+			}
+			.columneboxhandle {
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+			.columneboxhandle:after {
+				content: '';
+				position: absolute;
+				top: -5px;
+				left: -5px;
+				width: 10px;
+				height: 10px;
+				background-color: #fff;
+				border-radius: 50%;
+				cursor: pointer;
+			}
+			
+			.progresswrap {
+				padding: 34px;
+				user-select: none;
+			}
+			.progresswrapin {
+				position: relative;
+				width: 100%;
+				height: 2px;
+				background-color: rgba(255, 255, 255, 0.8);
+				border-radius: 5px;
+			}
+			.progressbox {
+				position: absolute;
+				top: 0;
+				left: 0;
+				height: 2px;
+				background-color: #00BDFF;
+				border-radius: 5px;
+				overflow: hidden;
+			}
+			.progressboxhandle {
+				position: absolute;
+				left: 0px;
+				top: 0px;
+			}
+			.progressboxhandle:after {
+				content: '';
+				position: absolute;
+				left: -10px;
+				top: -9px;
+				height: 20px;
+				width: 20px;
+				border-radius: 50%;
+				cursor: pointer;
+			}
+			.progresswrap:hover .progressboxhandle:after {
+				background-color: rgba(255, 255, 255, 0.8);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+		
+		<div class="audiobox" id="audio_h5_0_h5audio" @mousemove="enteraudiomove('audio_h5_0')" @mouseenter="ifenteraudio = 1" @mouseleave="ifenteraudio = 0">
+			<audio :src="audiosrc" style="width: 100%;" id="audio_h5_0_theaudio" @timeupdate="updateprogres('audio_h5_0')" @ended="playend('audio_h5_0')" @canplaythrough="canplay('audio_h5_0')"></audio>
+			
+			<div class="controlsbox" id="audio_h5_0_controlsbox" :style="{visibility:controlboxshow?'visible':'hidden'}">
+				
+				<div class="cell play-control" data-id="audio_h5_0" @click="ifshowcolumnewrap = 0,audioforplay('audio_h5_0')">
+					<div class="clickbtn" id="audio_h5_0_playbtn" v-show="playbtnshow">播放</div>
+				</div>
+				
+				<div class="cell pause-control" data-id="audio_h5_0" @click="ifshowcolumnewrap = 0,audioforpause('audio_h5_0')">
+					<div class="clickbtn" id="audio_h5_0_pausebtn" v-show="!playbtnshow" style="display: none;">暂停</div>
+				</div>
+				
+				<div class="cell time-control" data-id="audio_h5_0" @click="ifshowcolumnewrap = 0">
+					<div class="clickbtn" :class="{'clickbtnfortime-justminute':justminute?true:false}" id="audio_h5_0_timebtn">{{timesinfo}}</div>
+				</div>
+				
+				<div class="cell progress-control" style="width: 100%;" @click="ifshowcolumnewrap = 0">
+					<div class="progresswrap" @mousedown="audiomovestart()" @mousemove="audiomoveing()" @mouseup="audiomoveend()">
+						<div class="progresswrapin" id="audio_h5_0_wrapin">
+							<div class="progressbox" style="background-color: transparent;width: 100%;">
+								<div class="progressbox" id="audio_h5_0_box" :style="{width:hadplay}"></div>
+							</div>
+							<div class="progressboxhandle" id="audio_h5_0_box_handle" :style="{left:hadplay}" data-id="audio_h5_0"></div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="cell columne-control">
+					<div class="columnewrap" id="audio_h5_0_columnewrap" @mousedown="audio_columnemovestart()" @mousemove="audio_columnemoveing()" @mouseup="audio_columnemoveend()">
+						<div class="columnewrapin" id="audio_h5_0_columne_wrapin">
+							<div class="columnebox"></div>
+							<div class="columneboxhandle" id="audio_h5_0_columne_handle" :style="{left:nowvolumehandleleft}" data-id="audio_h5_0"></div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+		</div>
+		</div>
+		<script src="./static/js/common.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/common/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./static/js/_screenfull.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			/* 
+				进度条实现思路
+				@params
+				dragflag作为正在拖动的flag，为0，没有拖动，同步dom，为1，正在拖动，不同步dom，结束后，flag为0，处理进度与dom同步
+				进度条那里，已播放的肯定是用百分比的
+				以下情况适用于数据绑定的虚拟dom
+			 */
+			/* 
+				音量实现思路
+				@params
+				先把指针移动的判断先做出来，再分段处理
+			 */
+			vue = new Vue({
+				el:'#app',
+				data: {
+					//audio地址
+					audiosrc:'./Each and All.wav',
+					
+					//鼠标是否在移动flag
+					ifenteraudio:0,
+					enteraudiotimer:{},//存放定时器的对象
+					//选择的视频容器
+					selectaudioitem:'',
+					//进度条相关
+					dragflag:0,
+					basewidth:0,
+					wrapleft:0,//保存初始left
+					alltimes:0,//s
+					nowplaypers:0,//已播放的百分比
+					prostarget:'',
+					//
+					mx:0,
+					//音量调节相关
+					dragflag2:0,
+					columnebasewidth:0,
+					columnewrapleft:'',
+					fullvoice:100,
+					//
+					columnemx:0,
+					
+					//相关的一些dom绑定
+					controlboxshow:0,//操作工具条是否显示
+					ifaudioload:0,//视频是否加载完成
+					justminute:0,//是否只有分钟
+					timesinfo:'-/-',//时间显示
+					alltime:'',//所有时间
+					hadplay:'',//已播放的长度
+					playbtnshow:1,//播放按钮是否显示
+					nowvolumehandleleft:0,//音量滑块的距离
+				},
+				methods: {
+					
+					//设置播放时间显示
+					showplaytime : function(useid,now,all) {
+						//clickbtnfortime-justminute
+						if(all.split(':').length == 2) {
+							if(this.justminute == 0) {
+								this.justminute = 1
+							}
+						}else{
+							if(this.justminute == 1) {
+								this.justminute = 0
+							}
+						}
+						this.timesinfo= now+'/'+all
+					},
+					//进度条相关核心部分：绑定获取进度的api，一开始先调用，然后绑定播放和暂停
+					nowplay : function(useid,currentTime) {
+						this.basewidth = document.getElementById(useid+'_wrapin').offsetWidth
+						//求得已播放的百分比
+						//currentTime获取audio/audio已播放的进度
+						return {
+							pers:(currentTime/this.alltime * 100).toFixed(2) + '%',
+							points:Number((currentTime/this.alltime).toFixed(2))
+						}
+					},
+					setprogress : function(useid,currentTime) {
+						var _nowplay = this.nowplay(useid,currentTime)
+						this.nowplaypers = _nowplay.pers
+						//domset
+						this.showplaytime(useid,formatSeconds(currentTime),formatSeconds(this.alltime))
+						this.hadplay = this.nowplaypers
+					},
+					
+					//进度条相关核心部分：鼠标或手势操作进度api
+					audiomovestart : function(e) {
+						//clientY + (document.body.scrollTop || document.documentElement.scrollTop)
+						var ev = event || window.event || e
+						this.dragflag = 1
+						this.prostarget = (ev.target || ev.srcElement).id.indexOf('_handle')!=-1?(ev.target || ev.srcElement).id:''
+						this.selectaudioitem = this.prostarget?(ev.target || ev.srcElement).dataset.id:'',
+						this.audioforpause(this.selectaudioitem)//操作先暂停，再拖动
+						this.wrapleft = document.getElementById(this.prostarget).getBoundingClientRect().left
+						this.mx = (ev.targetTouches?ev.targetTouches[0].pageX:'' || ev.pageX) || (ev.targetTouches?ev.targetTouches[0].clientX:'' || ev.clientX)//底部滚动条肯定会屏蔽掉的，所以也可以拿这个clientX
+						//domset
+						this.playbtnshow = 1
+					},
+					audiomoveing : function() {
+						var ev = event || window.event || e
+						if(this.dragflag == 1){
+							if(this.prostarget) {
+								this.basewidth = document.getElementById(this.selectaudioitem+'_wrapin').offsetWidth
+								var endx = ((ev.targetTouches?ev.targetTouches[0].pageX:'' || ev.pageX) || (ev.targetTouches?ev.targetTouches[0].clientX:'' || ev.clientX)) - this.mx //拿到最后的移动坐标
+								var lastendx = (this.wrapleft-(document.getElementById(this.selectaudioitem+'_wrapin').getBoundingClientRect().left))+endx  // 保存最后拖动的宽度
+								if(lastendx<0) {
+									lastendx = 0
+								}else if(lastendx>this.basewidth) {
+									lastendx = this.basewidth
+								}
+								document.getElementById(this.selectaudioitem+'_theaudio').currentTime = Math.floor(lastendx/(this.basewidth / this.alltime) )
+								this.setprogress(this.selectaudioitem,Math.floor(lastendx/(this.basewidth / this.alltime) ))
+							}
+						}
+					},
+					audiomoveend : function() {
+						this.dragflag = 0
+						this.audioforplay(this.selectaudioitem)
+					},
+					//音量调节相关
+					ifshowcolumnebox : function(useid) {
+						if(this.ifshowcolumnewrap == 0) {
+							this.ifshowcolumnewrap = 1
+						}else{
+							this.ifshowcolumnewrap = 0
+						}
+					},
+					setvoice : function(useid,nowvoice) {
+						//domset
+						document.getElementById(useid+'_theaudio').volume = nowvoice / 100
+						this.nowvolumehandleleft = nowvoice + '%'
+					},
+					audio_columnemovestart : function(e) {
+						//clientY + (document.body.scrollTop || document.documentElement.scrollTop)
+						var ev = event || window.event || e
+						this.dragflag2 = 1
+						this.prostarget = (ev.target || ev.srcElement).id.indexOf('_handle')!=-1?(ev.target || ev.srcElement).id:''
+						this.selectaudioitem = this.prostarget?(ev.target || ev.srcElement).dataset.id:'',
+						this.columnewrapleft = document.getElementById(this.prostarget).getBoundingClientRect().left
+						this.columnemx = (ev.targetTouches?ev.targetTouches[0].pageX:'' || ev.pageX) || (ev.targetTouches?ev.targetTouches[0].clientX:'' || ev.clientX)//底部滚动条肯定会屏蔽掉的，所以也可以拿这个clientX
+					},
+					audio_columnemoveing : function() {
+						var ev = event || window.event || e
+						if(this.prostarget&&this.dragflag2 == 1) {
+							this.columnebasewidth = document.getElementById(this.selectaudioitem+'_columne_wrapin').offsetWidth
+							var endx = ((ev.targetTouches?ev.targetTouches[0].pageX:'' || ev.pageX) || (ev.targetTouches?ev.targetTouches[0].clientX:'' || ev.clientX)) - this.mx //拿到最后的移动坐标
+							var lastendx = (this.wrapleft-(document.getElementById(this.selectaudioitem+'_columne_wrapin').getBoundingClientRect().left))+endx  // 保存最后拖动的宽度
+							if(lastendx<0) {
+								lastendx = 0
+							}else if(lastendx>this.columnebasewidth) {
+								lastendx = this.columnebasewidth
+							}
+							//转化persent百分比this.columnebasewidth/100=lastendx/?
+							var persent = lastendx / (this.columnebasewidth/100);
+							this.setvoice(this.selectaudioitem,persent)
+						}
+					},
+					audio_columnemoveend : function() {
+						this.dragflag2 = 0
+					},
+					//在audio容器移动
+					enteraudiomove : function(useid) {
+						if(this.enteraudiotimer[useid]) {
+							clearTimeout(this.enteraudiotimer[useid])
+						}
+						//domset
+						this.controlboxshow = 1
+						this.enteraudiotimer[useid] = setTimeout(() => {
+							this.controlboxshow = 0
+						},2000)
+					},
+					//实时更新进度
+					updateprogres : function(useid) {
+						if(document.getElementById(useid + '_theaudio'))
+						this.setprogress(useid,document.getElementById(useid+'_theaudio').currentTime)
+					},
+					//监听结束
+					playend : function(useid) {
+						this.playbtnshow = 1
+					},
+					//获取信息
+					canplay : function(useid) { 
+						var alltimes = Math.floor(document.getElementById(useid+'_theaudio').duration)
+						this.alltime = alltimes
+						var nowvoice = document.getElementById(useid+'_theaudio').volume
+						if(this.ifaudioload == 0) {
+							this.ifaudioload = 1
+							this.showplaytime(useid,formatSeconds(0),formatSeconds(alltimes))
+						}
+						this.setvoice(useid,nowvoice * 100)
+					},
+					initgetaudioinfo : function(useid) {
+						this.enteraudiotimer[useid] = null;
+						this.ifaudioload = 0
+					},
+					//视频播放
+					audioforplay : function(useid) {
+						document.getElementById(useid+'_theaudio').play()
+						this.playbtnshow = 0
+					},
+					//视频暂停
+					audioforpause : function(useid) {
+						document.getElementById(useid+'_theaudio').pause()
+						this.playbtnshow = 1
+					},
+					
+					listens : function() {
+						window.addEventListener('mouseup',() => {
+							this.dragflag = 0
+							this.dragflag2 = 0
+						})
+					}
+				},
+				mounted() {
+					this.listens()
+					this.initgetaudioinfo('audio_h5_0')
+				}
+			})
+		</script>
+	</body>
+</html>

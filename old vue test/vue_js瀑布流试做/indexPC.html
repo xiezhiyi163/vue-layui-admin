@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				outline: 0;
+				border: 0;
+				text-decoration: none !important;
+				list-style: none;
+				appearance:none;
+				-webkit-appearance:none;
+			}
+			
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+				appearance: none;
+			}
+			
+			input[type="number"] {
+				appearance: textfield;
+			}
+			
+			button {
+				border-radius: 0;
+			}
+			/*  */
+			html,body{
+				position: relative;
+				overflow-x: hidden;
+			}
+			.grid {
+				overflow: hidden;
+			}
+			.grid-item {
+				height: 300px;
+				width: 33.35%;				
+				margin-bottom: 10px;
+				display: inline-block;
+			}
+			.grid-item div{
+				height: 100%;
+				margin: 0 5px;
+				background-color: burlywood;
+			}
+		</style>
+	</head>
+	<body>
+		<!--  -->
+		<template id="appsub">
+			<div>
+				111{{msc}}
+				<slot name="opp"></slot>
+			</div>
+		</template>
+		<!--  -->
+		<template id="appsub2">
+			<span>
+				22333
+			</span>
+		</template>
+		<!--  -->
+		<div id="app">
+			<appsub :msc='333' @msve='getmsve'>
+				<span slot='opp'>
+					555
+					<appsub2></appsub2>
+				</span>
+			</appsub>
+			<div id="wrap" style="width: 1240px;margin: auto;position: relative;">
+				<div class="grid">
+				  <div class="grid-item" v-for="(v,i) in datasv">
+					  <div></div>
+				  </div>
+				</div>				
+			</div>
+		</div>
+		<script src="static/common/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/common/masonry.pkjd.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/common/imagesloaded.pkjd.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var datas = {
+				msnryflag:0,
+				datasv:[0,0,0,0,0,0,0,0,0]
+			},
+			//瀑布流相关,none之后就重新初始化就行
+			masonry = function($vue){
+				window.msnry = new Masonry(document.querySelectorAll('.grid')[0], {
+				    // options...
+				    itemSelector: ".grid-item",
+				    columnWidth: 0,
+				});
+				//vue import进去就用对应的变量,这里是cdn引入所以用imagesLoaded
+				imagesLoaded('.grid-item', () => {
+				    msnry.layout(); // 图片加载完成后重新绘制。
+				});
+				//模拟追加
+				var l = $vue.datasv.length
+				setTimeout(function(){
+					$vue.datasv.push(0)
+					setTimeout(function(){
+						masonryresize()
+						//重新布局
+						for(var i=l;i<$vue.datasv.length;i++){
+							msnry.appended( document.querySelectorAll('.grid-item')[i]);
+							imagesLoaded('.grid-item', () => {
+								msnry.layout();// 图片加载完成后重新绘制。
+							});							
+						}
+					},0)
+				},3000)
+			},
+			//监听
+			masonryresize = function(){
+				var t = document.querySelectorAll('.grid-item')
+				if(window.innerWidth<750){
+					for(var i=0;i<t.length;i++){
+						t[i].style.width = '50%'
+					}
+					document.getElementById('wrap').style.width = '100%'
+					msnry.layout(); 
+					return;
+				}
+				if(window.innerWidth<1250){
+					for(var i=0;i<t.length;i++){
+						t[i].style.width = '33.36%'
+					}
+					document.getElementById('wrap').style.width = '940px'
+					msnry.layout(); 
+				}else{
+					for(var i=0;i<t.length;i++){
+						t[i].style.width = '25%'
+					}
+					document.getElementById('wrap').style.width = '1240px'
+					msnry.layout(); 
+				}
+			},
+			listens = function(){
+				//瀑布流尺寸监听
+				window.masonryresize()
+				window.addEventListener('resize',function(){
+					//瀑布流尺寸监听
+					masonryresize()						
+				})
+			},
+			//components
+			appsub = {
+				template:'#appsub',
+				props:{//或者直接['msc']
+					'msc':{
+						type:Number,
+					},
+				},//父传子，父组件给子组件绑定的这个属性,子组件直接把这个属性作为数据使用
+				data(){
+					return{}
+				},
+				methods:{},
+				mounted(){
+					this.$emit('msve',{a:11111})//子传父,直接发射事件,父组件调用这个事件并触发方法就行
+				}
+			},
+			appsub2 = {
+				template:'#appsub2',
+				data(){
+					return{}
+				},
+				methods:{},
+				mounted(){
+					
+				}
+			},
+			vue = new Vue({//兄弟传值:用第三方，把new Vue()存起来,然后用来给一个emit,一个on接收就行
+				el:'#app',
+				data:datas,
+				components:{
+					appsub,
+					appsub2,
+				},
+				methods:{
+					getmsve:function(e){
+						console.log(e.a)
+					}
+				},
+				mounted(){
+					//瀑布流
+					masonry(this);
+					//监听
+					listens()
+				}
+			});
+		</script>
+	</body>
+</html>
+
+<!-- 
+ npm: npm install masonry-layout --save
+ import Masonry from "masonry-layout"; // Vue项目的引入方式
+ 还要安装import imagesloaded from 'imagesloaded';-->

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			*{margin: 0;padding: 0;}
+			.calendar {position: relative;}
+			.calendarTop {
+				height: 100px;
+				line-height: 100px;
+				text-align: center;
+				background-color: #00BDFF;
+				color: white;
+				font-size: 16px;
+			}
+			.calendarTop .lastmonth,
+			.calendarTop .nextmonth {
+				padding: 0 30px;
+				height: 100px;
+				line-height: 100px;
+				color: white;
+			}
+			.lastmonth,
+			.nextmonth {
+				cursor: pointer;
+			}
+			.lastmonth:hover,
+			.nextmonth:hover,
+			.typeitem:hover{
+				background-color: #00a6dd;
+			}
+			.typeitem {
+				display: inline-block;
+				margin: 0 0 0 10px;
+				vertical-align: middle;
+				height: 28px;
+				line-height: normal;
+				cursor: pointer;
+			}
+			.daysign {
+				float: left;
+				width: 14.285%;
+				height: 16px;
+				padding: 20px 0;
+				text-align: center;
+				font-weight: 800;
+			}
+			.lastdayitem,
+			.dayitem,
+			.nextdayitem{
+				float: left;
+				width: 14.285%;
+				height: 16px;
+				padding: 20px 0;
+				text-align: center;
+				cursor: pointer;
+				background-color: #eee;
+				border-radius: 10px;
+			}
+			.lastdayitem,
+			.nextdayitem{
+				color: #ccc;
+			}
+			.datechoose{
+				background-color: #c6bcff;
+				color: white;
+			}
+			.datescope{
+				background-color: #ded3ff;
+				color: white;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="calendar">
+				<div class="calendarTop">
+					<div class="lastmonth" style="float: left;" @click="downmonth()">{{'<'}}</div>
+					{{year}}-{{month}} 
+					<div class="nextmonth" style="float: right;" @click="addmonth()">{{'>'}}</div>
+				</div>
+				<div style="background-color: #eee;">
+					<div class="daysign" style="background-color: #fff;color: red;">日</div>
+					<div class="daysign" style="background-color: #fff;">一</div>
+					<div class="daysign" style="background-color: #fff;">二</div>
+					<div class="daysign" style="background-color: #fff;">三</div>
+					<div class="daysign" style="background-color: #fff;">四</div>
+					<div class="daysign" style="background-color: #fff;">五</div>
+					<div class="daysign" style="background-color: #fff;color: red;">六</div>
+					<div class="lastdayitem" :class="{datechoose:datescope1 == v.date||datescope2 == v.date?true:false,datescope:datescope1!=''&&datescope2!=''&&(datescope1t<v.timestemp&&v.timestemp<datescope2t)?true:false}" v-for="(v,i) in lastdayarray" :title="v.date" @click="datachoose?datachoose(v.date):''">{{v.day}}</div>
+					<div class="dayitem" :class="{datechoose:datescope1 == v.date||datescope2 == v.date?true:false,datescope:datescope1!=''&&datescope2!=''&&(datescope1t<v.timestemp&&v.timestemp<datescope2t)?true:false}" v-for="(v,i) in dayarray" :title="v.date" @click="datachoose?datachoose(v.date):''">{{v.day}}</div>
+					<div class="nextdayitem" :class="{datechoose:datescope1 == v.date||datescope2 == v.date?true:false,datescope:datescope1!=''&&datescope2!=''&&(datescope1t<v.timestemp&&v.timestemp<datescope2t)?true:false}" v-for="(v,i) in nextdayarray" :title="v.date" @click="datachoose?datachoose(v.date):''">{{v.day}}</div>
+					<div style="clear: both;"></div>
+				</div>
+				<button @click="getdatescope">确定</button>
+			</div>
+			
+		</div>
+		<script src="./static/common/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			new Vue({
+				el:"#app",
+				data:{
+					//日历生成数据
+					year:'',
+					month:'',
+					lastdayarray:[],
+					dayarray:[],
+					nextdayarray:[],
+					firstday:'',
+					endday:'',
+					datescope1:'',
+					datescope1t:'',
+					datescope2:'',
+					datescope2t:'',
+					//选择日期回显的目标属性
+					texts:'',//确认回调指针，点击确定发射事件，回显到这，假如这个数组，先记录索引，点击确定发射事件，对应索引写入
+				},
+				methods:{
+					initcalendar:function(year,month){
+						
+						
+						//日历模块###
+						this.lastdayarray=[],
+						this.dayarray=[],
+						this.nextdayarray=[]
+						
+						
+						//获取今天日期月份以及哪天
+						var thismonth = new Date().getMonth()+1 < 10 ? '0'+(new Date().getMonth()+1) : new Date().getMonth()+1
+						var thisdate = new Date().getDate() < 10 ? '0'+(new Date().getDate()) : new Date().getDate()
+						
+						
+						
+						//获取年月
+						if(!year||!month){
+							this.year = new Date().getFullYear()
+							this.month = new Date().getMonth()+1 < 10 ? ( '0'+(new Date().getMonth()+1) ) : new Date().getMonth()+1							
+						}else{
+							this.year = year;this.month = month < 10 ? ( '0'+month ) : month
+						}
+						//分析平闰年，true是29天
+						var flag = this.year % 400 == 0 || (this.year % 4 == 0 && this.year % 100 != 0);
+						
+						
+						
+						//当月的第一天
+						this.firstday = new Date(this.year+'-'+this.month+'-01').getDay()
+						//每月天数封装
+						function allday(month){
+							if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){return 31};if(month == 2){return flag?29:28};if(month == 4 || month == 6 || month == 9 || month == 11 ){return 30};
+						}
+						//当月的结束那天
+						var enddate = allday(Number(this.month))
+						this.endday = new Date(this.year+'-'+this.month+'-'+enddate).getDay()
+						
+						
+						
+						
+						//前面的可见天数
+						for(var i=0;i<this.firstday;i++){
+							var lastmonth = Number(this.month) - 1 < 0?12:Number(this.month) - 1
+							var lastyear = lastmonth == 12 ? this.year - 1 : this.year
+							var fulldate = lastyear+'-'+(lastmonth<10?'0'+lastmonth:lastmonth)+'-'+(allday(Number(this.month)-1<1?12:Number(this.month)-1) - i)
+							var temp = {
+								date:fulldate,
+								timestemp:new Date(fulldate).getTime(),
+								day:allday(Number(this.month)-1<1?12:Number(this.month)-1) - i,
+								iftoday:new Date(fulldate).getTime() == new Date(new Date().getFullYear()+'-'+thismonth+'-'+thisdate).getTime()?1:0
+							}
+							this.lastdayarray.push( temp )
+						}
+						this.lastdayarray.sort((a,b)=>{
+							return a.day - b.day
+						})
+						//当月天数
+						for(var i=0;i<allday(Number(this.month));i++){
+							var newday = (i+1<10?'0'+(i+1):(i+1))
+							var fulldate = this.year+'-'+this.month+'-'+newday
+							var temp = {
+								date:fulldate,
+								timestemp:new Date(fulldate).getTime(),
+								day:i+1,
+								iftoday:new Date(fulldate).getTime() == new Date(new Date().getFullYear()+'-'+thismonth+'-'+thisdate).getTime()?1:0
+							}
+							this.dayarray.push( temp )
+						}
+						//后面可见天数
+						var newendday = this.endday==0?7:7-this.endday;
+						if((this.lastdayarray.length + this.dayarray.length + newendday - 1) / 7 < 6){
+							newendday = newendday + 7
+						}
+						for(var i=0;i<newendday;i++){
+							var nextmonth = Number(this.month) + 1 > 12?1:Number(this.month) + 1
+							var nextyear = nextmonth == 1 ? this.year + 1 : this.year
+							var newday = (i+1<10?'0'+(i+1):(i+1))
+							var fulldate = nextyear+'-'+(nextmonth<10?'0'+nextmonth:nextmonth)+'-'+newday
+							var temp = {
+								date:fulldate,
+								timestemp:new Date(fulldate).getTime(),
+								day:i+1,
+								iftoday:new Date(fulldate).getTime() == new Date(new Date().getFullYear()+'-'+thismonth+'-'+thisdate).getTime()?1:0
+							}
+							this.nextdayarray.push( temp )
+						}
+						this.nextdayarray.splice(this.nextdayarray.length-1,1)
+						
+
+						
+						//左右翻页方法
+						this.checkMonth = function(i) {
+							if (i<10){
+								i="0" + i;
+							}
+							return i;
+						}
+						this.downmonth = () => {
+							let temp = new Date(this.year + '-' + this.month + '-01')
+							let lastDate = temp.setMonth(temp.getMonth() - 1); // 输出日期格式为毫秒形式1551398400000
+							 
+							lastDate = new Date(lastDate);
+							let lastYear = lastDate.getFullYear();
+							let lastMonth = this.checkMonth(lastDate.getMonth() + 1); // 因日期中的月份表示为0-11，所以要显示正确的月份，需要 + 1
+							this.initcalendar(lastYear,Number(lastMonth))
+							this.downmonth_cb()
+						}
+						this.addmonth = () => {
+							let temp = new Date(this.year + '-' + this.month + '-01')
+							let nextDate = temp.setMonth(temp.getMonth() + 1); // 输出日期格式为毫秒形式1556668800000
+							 
+							nextDate = new Date(nextDate);
+							let nextYear = nextDate.getFullYear();
+							let nextMonth = this.checkMonth(nextDate.getMonth() + 1); // 因日期中的月份表示为0-11，所以要显示正确的月份，需要 + 1
+							this.initcalendar(nextYear,Number(nextMonth))
+							this.addmonth_cb()
+						}
+						
+						
+						
+						
+						
+						//获取今天
+						this.gettoday = () => {
+							if(this.year != new Date().getFullYear() || this.year == new Date().getFullYear()&&Number(this.month) != new Date().getMonth()+1){
+								this.initcalendar(new Date().getFullYear(),new Date().getMonth()+1)
+							}else{
+								this.initcalendar(new Date().getFullYear(),new Date().getMonth()+1)
+							}
+						}
+						
+						
+						
+						
+						//点击选中某天
+						this.datachoose = (thedate) => {
+							if(this.datescope1&&this.datescope2){
+								this.datescope1 = ''
+								this.datescope1t = ''
+								this.datescope2 = ''
+								this.datescope2t = ''
+							}
+							if(this.datescope1 == '') {
+								this.datescope1 = thedate
+								this.datescope1t = new Date(thedate).getTime()
+							}else{
+								this.datescope2 = thedate
+								this.datescope2t = new Date(thedate).getTime()
+								if(new Date(this.datescope2).getTime()<new Date(this.datescope1).getTime()){
+									this.datescope2 = ''
+									this.datescope2t = ''
+									this.datescope1 = thedate
+									this.datescope1t = new Date(thedate).getTime()
+								}
+							}
+						}
+						
+						
+						
+						
+						
+						//左右翻页回调(日历模块联动其他模块)
+						this.downmonth_cb = () => {
+						}
+						this.addmonth_cb = () => {
+						}
+						
+						/* --- */
+					},
+					getdatescope:function(){
+						this.texts = this.datescope1 + ' ' + this.datescope2
+						alert(this.texts)
+					}
+				},
+				mounted(){
+					this.initcalendar()
+				}
+			})
+		</script>
+	</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				outline: 0;
+				border: 0;
+				text-decoration: none !important;
+				list-style: none;
+				appearance:none;
+				-webkit-appearance:none;
+			}
+
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+				appearance: none;
+			}
+
+			input[type="number"] {
+				appearance: textfield;
+			}
+
+			button {
+				border-radius: 0;
+			}
+
+			/* 瀑布流 */
+			.page {
+				position: relative;
+				width: 100%;
+				height: 100%;
+			}
+
+			.content {
+				position: fixed;
+				top: 100%;
+			}
+
+			.content img {
+				display: block;
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="about">
+				<p>瀑布流，实现瀑布流布局，当删除瀑布流中的一个数据时，剩余的自动重新布局</p>
+				<div class="page">
+					<div class="content" v-for="(item, index) in list" :key="item.id" :style="{width: waterfallW + 'px', height: 'auto' + 'px', left: item.left + 'px', top: item.top + 'px',zIndex:1}"
+					 ref="col" @click="clickMe(index)">
+						<img :src="item.image" alt="">
+						{{item.desc}}
+					</div>
+				</div>
+				<div id="footer" style="height: 300px;background-color: burlywood;position: absolute;width: 100%;left: 0;"></div>
+			</div>
+		</div>
+		<script src="static/common/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			//瀑布流
+			let leftH = 0;
+			let rightH = 0;
+			var _$vue = '', //保存this
+				datas = {
+					//瀑布流
+					gap:10,
+					list: [{
+							image: 'http://img-agc.iqianggou.com/0a62fca1eeab88e894b93539c35446ec!180x180',
+							imgH: 122,
+							title: '标题只有1行哦长砍',
+							desc: 'Bon Cake(徐家汇店)这家店不要条好吃啊',
+							praiseNum: 322,
+							top: 0,
+							left: 0,
+							itemH: 0,
+						},
+						{
+							image: 'http://img-agc.iqianggou.com/0a62fca1eeab88e894b93539c35446ec!180x180',
+							imgH: 334,
+							title: '标题只有1行哦长砍标题只有1行哦长砍标题只有1行哦长砍',
+							desc: 'Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店',
+							praiseNum: 32232,
+							top: 0,
+							left: 0,
+							itemH: 0,
+						},
+						{
+							image: 'http://img-agc.iqianggou.com/0a62fca1eeab88e894b93539c35446ec!180x180',
+							imgH: 173,
+							title: '标题只有1行哦长砍',
+							desc: 'Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店',
+							praiseNum: 32,
+							top: 0,
+							left: 0,
+							itemH: 0,
+						},
+						{
+							image: 'http://img-agc.iqianggou.com/0a62fca1eeab88e894b93539c35446ec!180x180',
+							imgH: 225,
+							title: '标题只有1行哦长砍',
+							desc: 'Bon Cake(徐家汇店)这家店',
+							praiseNum: 32,
+							top: 0,
+							left: 0,
+							itemH: 0,
+						},
+						{
+							image: 'http://img-agc.iqianggou.com/0a62fca1eeab88e894b93539c35446ec!180x180',
+							imgH: 89,
+							title: '标题只有1行哦长砍',
+							desc: 'Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店Bon Cake(徐家汇店)这家店',
+							praiseNum: 32,
+							top: 0,
+							left: 0,
+							itemH: 0,
+						},
+						{
+							image: 'http://img-agc.iqianggou.com/0a62fca1eeab88e894b93539c35446ec!180x180',
+							imgH: 112,
+							title: '标题只有1行哦长砍',
+							desc: 'Bon Cake(徐家汇店)这家店',
+							praiseNum: 32,
+							top: 0,
+							left: 0,
+							itemH: 0,
+						},
+					],
+					list1: [],
+					list2: [],
+					initLeft: '',
+					waterfallW: '',
+					screenWidth: document.body.clientWidth, // 屏幕宽度
+				},
+				//瀑布流相关逻辑
+				resetfooter = function($vue){
+					var t = []
+					for (var i=0;i<$vue.$refs.col.length;i++) {
+						t.push(Number($vue.$refs.col[i].style.top.split('px')[0])+$vue.$refs.col[i].clientHeight)
+					}
+					t.sort(function(a,b){return a-b})
+					document.getElementById('footer').style.top = (Number(t[t.length-1]) + 80) + 'px'				
+				},
+				doSort = function(nodeList, $vue) {
+					setTimeout(function(){
+						for (let i = 0; i < nodeList.length; i++) {
+							nodeList[i].style.position = 'absolute';
+							const domHeight = nodeList[i].clientHeight;
+							let top;
+							let left;
+							let itemH;
+							if (leftH > rightH) {
+								left = $vue.gap * 2 + $vue.waterfallW;
+								top = rightH + $vue.gap;
+								itemH = domHeight;
+								rightH += $vue.gap + domHeight;
+							} else {
+								left = $vue.gap;
+								top = leftH + $vue.gap;
+								itemH = domHeight;
+								leftH += $vue.gap + domHeight;
+							}
+							$vue.list[i].top = top;
+							$vue.list[i].left = left;
+							$vue.list[i].itemH = itemH;
+							$vue.list[i].itemW = $vue.waterfallW;
+						}//排好之后设置尾部的顶部距离
+						setTimeout(function(){
+							resetfooter($vue)
+						},0)
+					},10)
+					//追加并重排
+					setTimeout(function(){
+						for(var i = 0; i<8;i++){
+							$vue.list.push({
+								image: 'http://img-agc.iqianggou.com/0a62fca1eeab88e894b93539c35446ec!180x180',
+								imgH: 112,
+								title: '标题只有1行哦长砍',
+								desc: 'Bon Cake(徐家汇店)这家店2',
+								praiseNum: 32,
+								top: 0,
+								left: 0,
+								itemH: 0,
+								itemW:$vue.waterfallW
+							})							
+						}
+						setTimeout(function(){
+							for (let i = 0; i < $vue.$refs.col.length; i++) {
+								$vue.$refs.col[i].style.position = 'absolute';
+							}
+							$vue.list = restartSort($vue.list)
+							//排好之后设置尾部的顶部距离
+							setTimeout(function(){
+								resetfooter($vue)
+							},0)
+						},0)						
+					},5000)
+				},
+				clickMe = function(index) {//点击删除
+					// this.list.splice(index, 1);
+					const renderedList = _$vue.list.slice(0, index);
+					const afreshRenderList = _$vue.list.slice(index + 1);
+					if (_$vue.list[index].left > $vue.gap) {
+						rightH = _$vue.list[index].top - gap; // 被删除数据列的无需重排数据的高度
+						leftH = checkHeight(renderedList, 'left');
+					} else {
+						rightH = checkHeight(renderedList, 'right');
+						leftH = _$vue.list[index].top - $vue.gap;
+					}
+					const newList = restartSort(afreshRenderList);
+					_$vue.list = [...renderedList, ...newList];
+				},
+				// 查找不需要重新排列的数据中非被删除列的高度
+				checkHeight = function(list, col) {
+					let needHeight = 0;
+					for (let i = 0; i < list.length; i++) {
+						if (col == 'left' && list[i].left == _$vue.gap && list[i].top > needHeight) {
+							needHeight = list[i].top + list[i].itemH;
+						} else if (
+							col == 'right' &&
+							list[i].left > _$vue.gap &&
+							list[i].top > needHeight
+						) {
+							needHeight = list[i].top + list[i].itemH;
+						}
+					}
+					return needHeight;
+				},
+				//重新排列列表中被删除数据之后的所有数据
+				restartSort = function(list) {
+					const nodeList = _$vue.$refs.col;
+					const newList = list;
+					leftH = 0
+					rightH = 0
+					newList.forEach(function(item,i) {
+						item.itemH = nodeList[i].clientHeight
+						item.itemW = _$vue.waterfallW
+						if (leftH > rightH) {
+							item.left = _$vue.gap * 2 + item.itemW;
+							item.top = rightH + _$vue.gap;
+							rightH += _$vue.gap + item.itemH;
+						} else {
+							item.left = _$vue.gap;
+							item.top = leftH + _$vue.gap;
+							leftH += _$vue.gap + item.itemH;
+						}
+					});
+					return newList;
+				},
+				//监听
+				listens = function(){
+					window.addEventListener('resize',function(){
+						//瀑布流,响应式重置宽度和距离
+						_$vue.screenWidth = document.body.clientWidth;
+						_$vue.waterfallW = (_$vue.screenWidth - 30) / 2;
+						_$vue.initLeft = (_$vue.screenWidth - _$vue.waterfallW) / 2;
+						restartSort(_$vue.list)
+						//排好之后设置尾部的顶部距离
+						setTimeout(function(){
+							resetfooter(_$vue)
+						},0)
+					})
+				},
+				vue = new Vue({
+					el:'#app',
+					data: datas,
+					created() {
+						//瀑布流
+						_$vue = this;
+						this.waterfallW = (this.screenWidth - 30) / 2;
+						this.initLeft = (this.screenWidth - this.waterfallW) / 2;
+					},
+					methods:{
+						clickMe:function(index){
+							clickMe(index)
+						}
+					},
+					mounted() {
+						//瀑布流
+						const nodeList = this.$refs.col;
+						doSort(nodeList, this);
+						//监听
+						listens()
+					}
+				})
+		</script>
+	</body>
+</html>

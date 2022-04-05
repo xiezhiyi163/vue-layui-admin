@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				outline: 0;
+				border: 0;
+				text-decoration: none !important;
+				list-style: none;
+				appearance:none;
+				-webkit-appearance:none;
+			}
+		
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+				appearance: none;
+			}
+		
+			input[type="number"] {
+				appearance: textfield;
+			}
+		
+			button {
+				border-radius: 0;
+			}
+			/* //ckeditor */
+			#tinydemo {
+				height: 100%;
+			}
+			#tinydemo-tool-container {
+				height: 39px;
+				border-bottom: 1px solid #ccc;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<!-- //ckeditor -->
+			<div style="height: 300px;min-width: 600px;border: 1px solid #ccc;padding-bottom: 40px;position: relative;">
+				<div id="tinydemoStatus" style="position: absolute;height: 100%;width: 100%;top: 0;left: 0;background-color: rgba(0,0,0,.6);color: white;line-height: 340px;text-align: center;">加载中。。。</div>
+				<div id="tinydemo-tool-container">
+					<p id="tinydemoStatus2" style="line-height: 39px;text-indent: 10px;">toolbar</p>
+				</div>
+				<div id="tinydemo">
+					<p style="padding-top: 15px;padding-left: 10px;">This is the initial editor content.</p>
+				</div>				
+			</div>
+			<button type="button" @click="getCKdata()">获取内容</button>
+			<!-- 过滤的使用 -- |后面的是作为条件过滤前面符合条件或不符合条件的内容 
+				可以在组件里面，filter:{key:fn}或者直接全局Vue.filter('key',fn)，fn是return出来的最终结果
+			-->
+			<div>{{3333|msc}}</div>
+		</div>
+		<script src="static/common/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/common/ckeditor.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var datas = {
+				//ckeditor
+				CKData:''
+			},
+			//ckeditor
+			seteditor = function($vue){
+				DecoupledEditor
+				.create( document.querySelector( '#tinydemo' ))
+				.then( editor => {
+					document.querySelector( '#tinydemoStatus2' ).style.display = 'none';
+					const toolbarContainer = document.querySelector( '#tinydemo-tool-container' );		
+					toolbarContainer.appendChild( editor.ui.view.toolbar.element );//
+					document.getElementById('tinydemoStatus').style.display = 'none'
+					//
+					function dataget(){//不停写入html
+						$vue.CKData = editor.getData()
+						setTimeout(dataget,100)
+					}
+					dataget()
+					//图片上传按钮相关,每个富文本上传图片估计都会有特定的异步上传并返回一个url作为图片的http连接放到一个对象里面
+					// function Upload(loader){
+					// 	this.upload = function(){
+					// 		return new Promise((resolve, reject) => {
+					// 			const data = new FormData();
+					// 			data.append('upload', this.loader.file);
+					// 			data.append('allowSize', 10);//允许图片上传的大小/兆
+					// 			$.ajax({
+					// 				url: 'url',
+					// 				type: 'POST',
+					// 				data: data,
+					// 				dataType: 'json',
+					// 				processData: false,
+					// 				contentType: false,
+					// 				success: function (data) {
+					// 					if (data.res) {
+					// 						resolve({
+					// 							default: data.url//这个对象才是最终要拿的
+					// 						});
+					// 					} else {
+					// 						reject(data.msg);
+					// 					}
+					// 				}
+					// 			});							   
+					// 		});
+					// 	}
+					// }
+					// editor.plugins.get('FileRepository').createUploadAdapter = function(loader){
+					// 	return new Upload(loader)
+					// }
+				})
+				.catch( error => {
+					console.error( error );
+				} );
+			},
+			getCKdata_ = function($vue){
+				console.log($vue.CKData)
+			},
+			//filter
+			//
+			msc_ = function($vue,value){
+				return value * 3
+			},
+			/**
+			 * @param {Vue}  
+			*/
+			vue = new Vue({
+				el:'#app',
+				data:datas,
+				methods:{
+					//ckeditor
+					getCKdata(){
+						getCKdata_(this)
+					}
+				},
+				filters:{
+					msc(value){
+						return msc_(this,value)
+					}
+				},
+				mounted(){
+					//ckeditor
+					seteditor(this)
+				}
+			})
+		</script>
+	</body>
+</html>
