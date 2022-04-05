@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="main">
-			<div class="loginwrap layui-form">
+			<div class="loginwrap layui-form" :style="{top,opacity}">
 				<div class="logotitle">
 					VUE ADMIN COMS
 				</div>
@@ -75,7 +75,9 @@
 	export default {
 		data(){
 			return {
-				$layui:''
+				$layui:'',
+				top:'',
+				opacity:''
 			}
 		},
 		methods:{
@@ -89,10 +91,16 @@
 			}
 		},
 		mounted(){
-			layui.use(['form','layer'],()=>{
-				this.$layui = layui
-				var form = this.$layui.form
-				form.render()
+			this.top='45%'
+			this.opacity='0'
+			setTimeout(()=>{
+				layui.use(['form','layer'],()=>{
+					this.top='50%'
+					this.opacity='1'
+					this.$layui = layui
+					var form = this.$layui.form
+					form.render()
+				})
 			})
 		}
 	}
@@ -139,7 +147,7 @@
 	.loginwrap {
 		display: inline-block;
 		position: relative;
-		top: 50%;
+		top: 45%;
 		left: 0;
 		width: 500px;
 		height: 400px;
@@ -147,6 +155,8 @@
 		box-shadow: 0 5px 10px 0 #777;
 		background-color: #fff;
 		text-align: left;
+		transition: 1000ms;
+		opacity: 0;
 	}
 	.logotitle {
 		padding: 40px 20px 20px;
